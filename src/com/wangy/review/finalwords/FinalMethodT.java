@@ -18,10 +18,12 @@ public class FinalMethodT {
         FinalMethod y = x;
         y.f();
         y.g();
-        // y.p() // can't access
+//         y.p(); // can't access
         System.out.println("----");
         FinalMethod z = new FinalMethod();
         z.f();
+        z.g();
+//        z.p(); // can't access
     }
 }
 
@@ -41,8 +43,9 @@ class FinalMethod {
 
 class FinalMethodExt extends FinalMethod {
 
+    @Override
     void f() {
-        super.f();
+//        super.f();
         System.out.println("ext f()");
     }
     // cannot override

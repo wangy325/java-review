@@ -10,18 +10,14 @@ package com.wangy.review.finalwords;
 public class FinalParam {
 
     static void with(final Employee e) {
-        raiseSalary(e);
-        System.out.println("salary of e = " + e.getSalary());
-    }
-
-    static void raiseSalary(final Employee e) {
         e.raiseSalary(3);
+        System.out.println("salary of e = " + e.getSalary());
     }
 
     static void swap(final Employee j, final Employee k) {
         Employee temp = j;
-        // k = temp; // not allowed
-        // j = k; // not allowed
+//         k = temp; // not allowed
+//         j = k; // not allowed
     }
 
     static void g(final int i) {
