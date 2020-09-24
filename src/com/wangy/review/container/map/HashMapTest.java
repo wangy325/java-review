@@ -2,7 +2,6 @@ package com.wangy.review.container.map;
 
 import java.lang.reflect.Field;
 import java.util.*;
-import java.util.function.BiConsumer;
 
 /**
  * @author wangy
@@ -18,7 +17,7 @@ public class HashMapTest {
 
     private static void viewTest() {
         Map<Integer, String> hm = new HashMap<>(8);
-        hm.put(1,"难忘的一天");
+        hm.put(1, "难忘的一天");
         Set<Integer> keySet = hm.keySet();
         //keySet.add(2); // unsupported operation exception
         Iterator<Integer> ikey = keySet.iterator();
@@ -31,8 +30,8 @@ public class HashMapTest {
         // already deleted
         System.out.println("values contains: " + values.contains("难忘的一天"));
         // values.add("你瞒我瞒"); // unsupported either
-        hm.put(1,"你瞒我瞒");
-        hm.put(2,"樱花树下");
+        hm.put(1, "你瞒我瞒");
+        hm.put(2, "樱花树下");
         // ikey.next(); // fast-fail iterator, ikey is out of date
         boolean remove = values.remove("你瞒我瞒");
         Iterator<String> ivalue = values.iterator();
@@ -40,8 +39,8 @@ public class HashMapTest {
         ivalue.remove();
 
 
-        hm.put(1,"红豆");
-        hm.put(2,"风衣");
+        hm.put(1, "红豆");
+        hm.put(2, "风衣");
         Set<Map.Entry<Integer, String>> entries = hm.entrySet();
         // entries.add() // unsupported either
         System.out.println("entry size: " + entries.size());
@@ -51,16 +50,18 @@ public class HashMapTest {
             public Integer getKey() {
                 return 1;
             }
+
             @Override
             public String getValue() {
                 return "红豆";
             }
+
             @Override
             public String setValue(String value) {
                 return null;
             }
         });
-        hm.forEach((k,v) -> System.out.println("key:" + k + ", value:" + v));
+        hm.forEach((k, v) -> System.out.println("key:" + k + ", value:" + v));
         Iterator<Map.Entry<Integer, String>> ientry = entries.iterator();
         ientry.next();
         ientry.remove();
@@ -69,38 +70,46 @@ public class HashMapTest {
     }
 
     static void bucketsTest() throws Exception {
-        // initial capacity 8, load factor 0.75, threshold 6
-        HashMap<String, String> hm = new HashMap<>(7);
+        // default load factor 0.75,
+        HashMap<String, String> hm = new HashMap<>(8);
 
-        hm.put("1", "ok");
-        hm.put("2", "fine");
-        hm.put("3", "nice");
-        hm.put("4", "no");
-        hm.put("5", "ops");
-        hm.put("6", "fuck");
+        hm.put("ok", "ok");
+        hm.put("fine", "fine");
+        hm.put("nice", "nice");
+        hm.put("no", "no");
+        hm.put("oops", "oops");
+        hm.put("fuck", "fuck");
 
 
         Class<?> cls = HashMap.class;
 
-        Field table = cls.getDeclaredField("table");
+        Field t = cls.getDeclaredField("table");
         Field threshold = cls.getDeclaredField("threshold");
-        Class<?> node = Class.forName("java.util.HashMap$Node");
-        table.setAccessible(true);
+        // 不能使用Hash.Node对象
+//        Class<?> Node = Class.forName("java.util.HashMap$Node");
+        t.setAccessible(true);
         threshold.setAccessible(true);
         // Node<K,V>[]
-        Object[] o = (Object[]) table.get(hm);
-        System.out.println("initial buckets size: " + o.length);
+        Map.Entry<String,String>[] table = (Map.Entry<String, String>[]) t.get(hm);
+        Map.Entry<String,String> node = table[7];
+        // illegal
+//        Map.Entry<String,String> next = node.next;
+//        System.out.println(next.getKey() + ":" + next.getValue());
+        System.out.println("initial capacity: " + table.length);
         System.out.println("initial threshold: " + threshold.get(hm));
+        System.out.println("size before: " + hm.size());
 
-        Set<Map.Entry<String, String>> entries = hm.entrySet();
-        System.out.println("number of entries: " + entries.size());
-        //
-        /*entries.forEach((e) -> {
+        //传统遍历方法
+        /*Set<Map.Entry<String, String>> entries = hm.entrySet();
+        entries.forEach((e) -> {
             System.out.println(e.getKey() + e.getValue());
         });*/
         hm.forEach((k, v) -> System.out.println(k + ", " + v));
         hm.put("apple", "music");
-        System.out.println(("buckets after rehash:" + ((Object[]) table.get(hm)).length));
+        // size > threshold, then resize happen
+        System.out.println(("capacity after resize:" + ((Object[]) t.get(hm)).length));
+        System.out.println("threshold after resize: " + threshold.get(hm));
+        System.out.println("size after: " + hm.size());
     }
 
     static void testHash(int cap, Object key) {
@@ -118,6 +127,5 @@ public class HashMapTest {
         // false
         System.out.println(i == n || i == hash);
     }
-
 
 }
