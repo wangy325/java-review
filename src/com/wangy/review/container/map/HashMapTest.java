@@ -10,8 +10,8 @@ import java.util.*;
  */
 public class HashMapTest {
     public static void main(String[] args) throws Exception {
-        bucketsTest();
-//        testHash(7, "eh");
+//        bucketsTest();
+        testHash(7, "eh");
 //        viewTest();
     }
 
@@ -19,36 +19,42 @@ public class HashMapTest {
         Map<Integer, String> hm = new HashMap<>(8);
         hm.put(1, "难忘的一天");
         Set<Integer> keySet = hm.keySet();
-        //keySet.add(2); // unsupported operation exception
+//        keySet.add(2); // UnsupportedOperationException
         Iterator<Integer> ikey = keySet.iterator();
+//        hm.put(19, "难忘的一天"); // ConcurrentModificationException
         ikey.next();
         // can remove key-value pair by keySet
         ikey.remove();
         ikey.forEachRemaining(System.out::println);
 
+        // already deleted, no key-value pair in Map now
         Collection<String> values = hm.values();
-        // already deleted
-        System.out.println("values contains: " + values.contains("难忘的一天"));
-        // values.add("你瞒我瞒"); // unsupported either
-        hm.put(1, "你瞒我瞒");
-        hm.put(2, "樱花树下");
-        // ikey.next(); // fast-fail iterator, ikey is out of date
+        /**
+         * 映射条目很多时，这个方法效率不高
+         * @see  java.util.HashMap#containsValue(java.lang.Object)
+         */
+        System.out.println("contains '难忘的一天': " + values.contains("难忘的一天"));
+        // values.add("你瞒我瞒"); // UnsupportedOperationException
+        hm.put(3, "你瞒我瞒");
+        hm.put(4, "樱花树下");
+//         ikey.next(); //ConcurrentModificationException, fast-fail iterator, ikey is out of date
         boolean remove = values.remove("你瞒我瞒");
         Iterator<String> ivalue = values.iterator();
         ivalue.next();
         ivalue.remove();
 
+        // map should be empty now
 
-        hm.put(1, "红豆");
-        hm.put(2, "风衣");
+        hm.put(5, "红豆");
+        hm.put(6, "风衣");
         Set<Map.Entry<Integer, String>> entries = hm.entrySet();
-        // entries.add() // unsupported either
+//         entries.add() // UnsupportedOperationException
         System.out.println("entry size: " + entries.size());
         // remove entry with particular key-value
         entries.remove(new Map.Entry<Integer, String>() {
             @Override
             public Integer getKey() {
-                return 1;
+                return 5;
             }
 
             @Override
@@ -62,10 +68,12 @@ public class HashMapTest {
             }
         });
         hm.forEach((k, v) -> System.out.println("key:" + k + ", value:" + v));
-        Iterator<Map.Entry<Integer, String>> ientry = entries.iterator();
-        ientry.next();
-        ientry.remove();
-        ientry.forEachRemaining(System.out::println);
+        Iterator<Map.Entry<Integer, String>> ie = entries.iterator();
+//        hm.put(7, "再度重相逢"); // ConcurrentModificationException
+        ie.next();
+        ie.remove();
+        // empty now
+        ie.forEachRemaining(System.out::println);
 
     }
 
@@ -90,8 +98,8 @@ public class HashMapTest {
         t.setAccessible(true);
         threshold.setAccessible(true);
         // Node<K,V>[]
-        Map.Entry<String,String>[] table = (Map.Entry<String, String>[]) t.get(hm);
-        Map.Entry<String,String> node = table[7];
+        Map.Entry<String, String>[] table = (Map.Entry<String, String>[]) t.get(hm);
+        Map.Entry<String, String> node = table[7];
         // illegal
 //        Map.Entry<String,String> next = node.next;
 //        System.out.println(next.getKey() + ":" + next.getValue());
@@ -104,9 +112,10 @@ public class HashMapTest {
         entries.forEach((e) -> {
             System.out.println(e.getKey() + e.getValue());
         });*/
-        hm.forEach((k, v) -> System.out.println(k + ", " + v));
+        hm.forEach((k, v) -> System.out.print(k + "," + v + ";\t"));
         hm.put("apple", "music");
         // size > threshold, then resize happen
+        System.out.println();
         System.out.println(("capacity after resize:" + ((Object[]) t.get(hm)).length));
         System.out.println("threshold after resize: " + threshold.get(hm));
         System.out.println("size after: " + hm.size());
@@ -121,9 +130,13 @@ public class HashMapTest {
         n |= n >>> 8;
         n |= n >>> 16;
         n = (n < 0) ? 1 : Math.min(n, max);
-        int t;
-        int hash = (key == null) ? 0 : (t = key.hashCode()) ^ (t >>> 16);
-        int i = n & hash;
+        n++;
+        int t = key.hashCode() + (1<< 16);
+        // 对于任何小于1<<16的正数t，做t>>>16运算，得0；任何非0数n，有n^0=n
+        System.out.println(t< (1<<16) && (t >>> 16) ==0);
+        // HashMap中为何如此计算key的hash值？
+        int hash = (key == null) ? 0 : (t ^ (t >>> 16));
+        int i = (n - 1) & hash;
         // false
         System.out.println(i == n || i == hash);
     }
