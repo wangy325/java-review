@@ -1,4 +1,4 @@
-package com.wangy.review.container.collection;
+package com.wangy.review.container.map;
 
 import java.util.Map;
 
@@ -12,6 +12,7 @@ public class NodeTest<K, V> {
     final Node<K, V>[] table = new Node[4];
     final Node<K, V>[] newtab = new Node[8];
 
+    // 构造代码块，构造NodeTest实例时执行
     {
         Node node = new Node(5, "five", null);
         Node node1 = new Node(3, "four", null);
@@ -33,14 +34,13 @@ public class NodeTest<K, V> {
 
         NodeTest<Integer, String> nt = new NodeTest<>();
 
-
         // 实际上可以直接复制链表，其next域可以复制过来
 //        nt.copyAndPrintTable(table, newtab);
 
         // 看看HashMap源码的resize方法的复制部分究竟搞什么飞机
         nt.resize(nt.table, nt.newtab);
         // 看看此时的newtab
-//        nt.printTable(nt.newtab);
+        nt.printTable(nt.newtab);
 
         // 简单的实验
 //        System.out.println("-------");
