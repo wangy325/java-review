@@ -112,9 +112,9 @@ public class LinkedHashMapTest {
             @Override
             protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
                 Set<Map.Entry<K, V>> entries = entrySet();
+                // lambda表达式中使用外部变量需要保证线程安全
                 AtomicInteger vs = new AtomicInteger();
                 entries.removeIf(next -> {
-                    K key = next.getKey();
                     V value = next.getValue();
                     if (value instanceof Integer) {
                         if ((Integer) value > 0) {
@@ -124,6 +124,7 @@ public class LinkedHashMapTest {
                     }
                     return false;
                 });
+                // 打印次数反映此法的调用次数
                 System.out.println(vs.intValue() == count);
                 //若在此方法中对集合进行修改，那么必须返回false
                 return false;
