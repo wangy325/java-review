@@ -17,18 +17,20 @@ interface Dest {
 public class Flight3 {
     private final int C = 100;
     public Dest dest(String t) {
+        /**局部内部类*/
         class PDest implements Dest {
             private String to;
             private int y;
             private PDest(String dest) {
                 this.to = dest;
+                // 使用.this访问外围类域
                 this.y = Flight3.this.C;
             }
 
             @Override
             public String showDest() {
                 // not allowed!
-//                t = t.concat("xxx");
+                // t = t.concat("xxx");
                 System.out.println(y);
                 return to;
             }

@@ -27,7 +27,7 @@ class Pistol {
     Wrap wrap(int x) {
         return new Wrap(x) {
             int v;
-
+            // 构造代码块
             {
                 System.out.println("extended initialized");
                 v = super.value() * 3;

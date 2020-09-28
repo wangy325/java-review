@@ -7,11 +7,14 @@ package com.wangy.review.innerclass.staticinner;
  * @version 1.0
  * @date 2020/4/21 / 01:25
  */
-public interface InnerclassInterface {
+public interface InnerClassInterface {
 
     void m();
 
-    class Test implements InnerclassInterface{
+    /**
+     * 此类默认为静态内部类
+     */
+    class Test implements InnerClassInterface {
 
         @Override
         public void m() {
@@ -19,13 +22,18 @@ public interface InnerclassInterface {
         }
     }
 
-    static Test test(){
+    /**
+     * 接口中可以包含静态方法
+     *
+     * @return InnerClassInterface
+     */
+    static Test test() {
         return new Test();
     }
 
-    class Main{
+    class Main {
         public static void main(String[] args) {
-            Test test = test();
+            Test test = InnerClassInterface.test();
             test.m();
         }
     }

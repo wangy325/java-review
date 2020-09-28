@@ -2,6 +2,7 @@ package com.wangy.review.innerclass;
 
 /**
  * simple factory using anonymous inner class
+ * 静态工厂方法
  *
  * @author wangy
  * @version 1.0
@@ -9,16 +10,11 @@ package com.wangy.review.innerclass;
  */
 public class SimpleFactory2 {
 
-    public void serviceConsumer(ServiceFactory sf){
-        Service s = sf.getService();
-        s.service_a();
-        s.service_b();
-    }
-
     public static void main(String[] args) {
-        SimpleFactory2 sf = new SimpleFactory2();
-        sf.serviceConsumer(NameService.factory);
-        sf.serviceConsumer(AgeService.factory);
+        NameService.getFactory.getService().service_a();
+        NameService.getFactory.getService().service_b();
+        AgeService.getFactory.getService().service_a();
+        AgeService.getFactory.getService().service_b();
     }
 }
 
@@ -41,7 +37,7 @@ class NameService implements Service {
     @Override
     public void service_b() {System.out.println("NameService.service_b()");}
 
-    public static ServiceFactory factory = new ServiceFactory() {
+    public static ServiceFactory getFactory = new ServiceFactory() {
         @Override
         public Service getService() {
             return new NameService();
@@ -61,7 +57,7 @@ class AgeService implements Service {
     @Override
     public void service_b() {System.out.println("AgeService.service_b()");}
 
-    public static ServiceFactory factory = new ServiceFactory() {
+    public static ServiceFactory getFactory = new ServiceFactory() {
         @Override
         public Service getService() {
             return new AgeService();
