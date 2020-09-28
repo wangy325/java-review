@@ -33,14 +33,15 @@ public class TreeMapTest {
             break;
         }
         tm.computeIfPresent("lala", (k, v) -> "失落沙洲");
-        // entries.add(new Map.Entry<String, String>() {...}); // Unsupported Operation Exception.
+        // entries.add(new Map.Entry<String, String>() {...}); // Unsupported Operation Exception
+        // 字典序迭代
         tm.forEach((k, v) -> System.out.println(k + ": " + v));
 
         // test iterator
         Iterator<Map.Entry<String, String>> ie = entries.iterator();
         ie.next();
         ie.remove();
-        // tm.putAll(map); CME
+        // tm.putAll(map); // ConcurrentModificationException
         ie.next();
         ie.forEachRemaining(x -> System.out.print(x + "\t"));
         // 指定比较器
@@ -54,8 +55,13 @@ public class TreeMapTest {
     static void navigableTest() {
         TreeMap<String, String> tm = new TreeMap<>(map);
         System.out.println(tm.firstEntry().getKey());
-        SortedMap<String, String> subMap = tm.subMap("AMIT", "andy"+"0");
+        // 使用一个比key 'andy'大的值，即可包含这个key，"+ 0"是一个实用手段
+        SortedMap<String, String> subMap = tm.subMap("AMIT", "andy" + "0");
+        subMap.compute("AMIT", (k, v) -> "彩虹");
         subMap.forEach((k, v) -> System.out.println(k + ", " + v));
-        System.out.println(tm.ceilingEntry("AMIt").getKey());
+
+        // NavigableMap接口方法，返回大于或等于给定key的一个entry
+        System.out.println(tm.ceilingEntry("AMIT").getValue());
+
     }
 }

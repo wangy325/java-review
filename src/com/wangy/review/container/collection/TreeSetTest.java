@@ -46,9 +46,12 @@ public class TreeSetTest {
                 return result;
             }
         }
+        // 故意修改比较器的相等逻辑，可以看到Set中有2个相等对象
+        // 所以在编程中应该保证TreeSet中元素的equals方法和比较器的逻辑一致
         SortedSet<Item> ss = new TreeSet<>((o1, o2) -> o1.code - o2.code + 1);
-        ss.add(new Item(1, "apple"));
-        ss.add(new Item(1, "apple"));
+        Item item = new Item(1, "apple");
+        ss.add(item);
+        ss.add(item);
         ss.forEach(System.out::println);
     }
 
@@ -65,6 +68,7 @@ public class TreeSetTest {
             add("google");
         }};
 
+        // 子集
         SortedSet<String> headSet = ss.headSet("oppo", false);
         ss.add("huawei");
         Iterator<String> i = headSet.iterator();
@@ -76,9 +80,11 @@ public class TreeSetTest {
                 i.remove();
             }
         }
-        headSet.forEach(System.out::println);
+        // 对子集的修改作用于原集上，google已被删除
+        ss.forEach(System.out::println);
         System.out.println("contains google? " + ss.contains("google"));
         Iterator<String> i2 = ss.descendingIterator();
+        // 元素有序，vivo在最后
         System.out.println("vivo".equals(i2.next()));
     }
 }
