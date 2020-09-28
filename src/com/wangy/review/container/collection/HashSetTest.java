@@ -1,10 +1,7 @@
 package com.wangy.review.container.collection;
 
 import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * simple hashSet test
@@ -16,9 +13,9 @@ import java.util.Set;
 public class HashSetTest {
 
     public static void main(String[] args) throws Exception {
-//        initializationTest();
+        initializationTest();
 //        hashTest("obj");
-        contentTest();
+//        contentTest();
     }
 
     static void initializationTest() throws Exception {
@@ -34,7 +31,9 @@ public class HashSetTest {
         System.out.println(fm.get(hs).getClass());
         @SuppressWarnings("unchecked")
         HashMap<Integer, Object> o = (HashMap<Integer, Object>) fm.get(hs);
-        System.out.println(o.get(1).getClass());
+        for (Map.Entry<Integer, Object> entry : o.entrySet()) {
+            System.out.println(entry.getKey() + ":" + entry.getValue());
+        }
     }
 
     static void hashTest(Object key) {

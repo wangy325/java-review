@@ -20,7 +20,7 @@ public class ArrayListTest {
             add("google");
             add("amazon");
             add("cisco");
-            add("facebook");
+            add("faceboog");
             add("twitter");
         }};
     }
@@ -28,8 +28,8 @@ public class ArrayListTest {
     public static void main(String[] args) throws Exception {
 //        initializeTest();
 //        iteratorTest();
-//        subListTest();
-        listIteratorTest();
+        subListTest();
+//        listIteratorTest();
     }
 
     static void arraysCopyTest() {
@@ -54,7 +54,7 @@ public class ArrayListTest {
         System.out.println("is subString instance of ArrayList? "
             + (strings instanceof ArrayList)
             + "\n-------");
-        // a.add("iqoo"); // cause ConcurrentModifiedException for subList
+//         a.add("iqoo"); // cause ConcurrentModifiedException for subList
         ListIterator<String> subIterator = strings.listIterator();
         while (subIterator.hasNext()) {
             subIterator.set(subIterator.next().toUpperCase() + " revised by subList");
@@ -98,7 +98,7 @@ public class ArrayListTest {
         Iterator<String> newIterator = a.iterator();
         newIterator.next();
         newIterator.forEachRemaining(s -> {
-            s = s.replaceFirst("g", "G");
+            s = s.replaceFirst("^g", "G");
             System.out.println(s);
         });
 

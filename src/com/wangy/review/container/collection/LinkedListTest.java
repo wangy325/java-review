@@ -88,11 +88,11 @@ public class LinkedListTest {
         // LinkedList can use as deque
         ll.add("google");
         ll.addFirst("apple");
-        ll.forEach(System.out::print);
+        ll.forEach(System.out::println);
         ll.offerLast("microsoft");
         Iterator<String> iterator = ll.iterator();
         iterator.next();
         iterator.remove();
-        ll.forEach(System.out::print);
+        ll.forEach(System.out::println);
     }
 }
