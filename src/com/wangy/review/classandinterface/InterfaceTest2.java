@@ -25,9 +25,10 @@ interface Vita{
 }
 
 class W extends Drink implements Vita{
-//    @Override
-//    public void pType() {
-////        super.pType();
-////        Vita.super.pType();
-//    }
+    @Override
+    public void pType() {
+//        super.pType();
+        // 使用接口的默认方法
+        Vita.super.pType();
+    }
 }

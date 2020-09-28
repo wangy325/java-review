@@ -16,9 +16,9 @@ public class EqualsT {
 }
 
 class Stu{
-    private String name;
-    private int age;
-    private String code;
+    protected String name;
+    protected int age;
+    protected String code;
 
     public Stu(String name, int age, String code) {
         this.name = name;
@@ -41,9 +41,6 @@ class Stu{
 }
 
 class StuM extends Stu{
-    private String name;
-    private int age;
-    private String code;
     private String resp;
 
     public StuM(String name, int age, String code, String resp) {
@@ -53,5 +50,7 @@ class StuM extends Stu{
         this.name = name;
         this.resp = resp;
     }
+
+    // 导出类无法覆盖equals()方法
 
 }
