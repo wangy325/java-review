@@ -1,8 +1,8 @@
 package com.wangy.review.container.collections;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -16,32 +16,46 @@ import java.util.concurrent.Executors;
 public class SynchronizedViewTest {
 
 
+    private static List<Integer> synchronizedList = Collections.synchronizedList(new ArrayList<Integer>() {{
+        add(0);
+    }});
+    private static List<Integer> list = new ArrayList<Integer>() {{
+        add(0);
+    }};
+
     public static void main(String[] args) {
-        SynchronizedList();
+        unsafeIncrAndReplace(synchronizedList);
+        System.out.println(synchronizedList.get(0));
+        unsafeIncrAndReplace(list);
+        System.out.println(list.get(0));
     }
 
-    static void SynchronizedList() {
-
-        List<String> list = Collections.synchronizedList(UnmodifiableViewTest.l);
+    /**
+     * 线程不安全的方法，如果使用线程安全的集合，可以获得预期的结果
+     *
+     * @param list
+     */
+    static void unsafeIncrAndReplace(List<Integer> list) {
 
         ExecutorService executorService = Executors.newFixedThreadPool(10);
 
-        // 没有出效果
-        for (int i = 0; i < 5; i++) {
-            int y = i;
-            executorService.execute(()->UnmodifiableViewTest.l.add(0,String.valueOf(y)));
-            executorService.execute(()-> System.out.println(UnmodifiableViewTest.l.get(0)));
-        }
+        //
+        executorService.execute(() -> {
+            for (int i = 0; i < 50; i++) {
+                int y = list.get(0);
+                list.clear();
+                list.add(y + i);
 
+            }
+        });
 
-        /*for (int i = 0; i <5 ; i++) {
-            int y = i;
-            executorService.execute(()->list.add(0,String.valueOf(y)));
-        }
-
-        for (int i = 0; i < 5; i++) {
-            executorService.execute(()-> System.out.println(list.get(0)));
-        }*/
+        executorService.execute(() -> {
+            for (int i = 0; i < 50; i++) {
+                int y = list.get(0);
+                list.clear();
+                list.add(y + i);
+            }
+        });
 
         executorService.shutdown();
     }
