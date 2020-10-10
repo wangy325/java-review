@@ -1,5 +1,7 @@
 package com.wangy.review.concurrency.basic;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * join也可以被中断
  *
@@ -9,20 +11,27 @@ package com.wangy.review.concurrency.basic;
  */
 public class JoinAndSleep {
     public static void main(String[] args) {
-        Slepper sa = new Slepper("sa", 100);
-        Slepper sb = new Slepper("sb", 100);
-        Joiner ja = new Joiner("ja", sa);
-        Joiner jb = new Joiner("jb", sb);
-//        sa.interrupt();
-        ja.interrupt();
+        Sleeper s1 = new Sleeper("s1", 200);
+        Joiner j1 = new Joiner("j1", s1);
+        try {
+            TimeUnit.MILLISECONDS.sleep(50);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        // 此时j1的状态是WAITING
+        System.out.println(j1.getState());
+
+        s1.interrupt();
+//        j1.interrupt();
     }
 
-    static class Slepper extends Thread {
-        private int duration;
+    static class Sleeper extends Thread {
+        private final int duration;
 
-        public Slepper(String name, int duration) {
+        public Sleeper(String name, int duration) {
             super(name);
             this.duration = duration;
+            // 在构造器中直接启动线程，这种情形称为自管理线程
             start();
         }
 
@@ -31,6 +40,7 @@ public class JoinAndSleep {
             try {
                 sleep(duration);
             } catch (InterruptedException e) {
+                // 此处的中断状态是false 因为sleep()方法抛出此异常之后线程的中断状态被清除
                 System.out.println(currentThread() + "is interrupted ? " + isInterrupted());
                 return;
             }
@@ -39,20 +49,22 @@ public class JoinAndSleep {
     }
 
     static class Joiner extends Thread {
-        private Slepper slepper;
+        private final Sleeper sleeper;
 
-        public Joiner(String name, Slepper slepper) {
+        public Joiner(String name, Sleeper sleeper) {
             super(name);
-            this.slepper = slepper;
+            this.sleeper = sleeper;
             start();
         }
 
         @Override
         public void run() {
             try {
-                slepper.join();
+                // 等待sleeper完成
+                sleeper.join();
             } catch (InterruptedException e) {
-                System.out.println(currentThread() + " interrupted()");
+                // 在当前线程挂起等待sleeper线程完成的过程中，若调用interrupt()方法中断线程则会抛出此异常
+                System.out.println(currentThread() + " interrupted.");
                 return;
             }
             System.out.println(currentThread() + "join completed.");

@@ -28,11 +28,16 @@ public class ExceptionThreadWithFactory {
         }
     }
 
+    /**
+     * 使用{@link ThreadFactory}可以配置执行任务的线程的属性
+     */
     static class MyThreadFactory implements ThreadFactory {
 
         @Override
         public Thread newThread(Runnable r) {
+            System.out.println(this + " starts create thread");
             Thread t = new Thread(r);
+            System.out.println("created " + t);
             // you can set up thread's infos here
             t.setUncaughtExceptionHandler(new MyExceptionHandler());
             return t;
@@ -43,6 +48,8 @@ public class ExceptionThreadWithFactory {
 
         @Override
         public void run() {
+            // 查看异常处理器
+            System.out.println("eh = " + Thread.currentThread().getUncaughtExceptionHandler());
             throw new RuntimeException();
         }
     }

@@ -1,14 +1,17 @@
 package com.wangy.review.concurrency.basic;
 
 /**
+ * 常用的使用匿名内部类开启一个线程实际上就是自管理线程的应用例子
+ *
  * @author wangy
  * @version 1.0
  * @date 2020/5/12 / 09:12
  */
 public class SelfManageThread {
     Thread thread;
+
     public SelfManageThread() {
-        thread= new Thread(new Runnable() {
+        thread = new Thread(new Runnable() {
             private int count = 5;
 
             @Override
@@ -28,9 +31,8 @@ public class SelfManageThread {
     }
 
 
-
     public static void main(String[] args) {
-        for (int i = 0; i <5 ; i++) {
+        for (int i = 0; i < 5; i++) {
 
 //            new SelfManaged();
             new SlefRunnable();
@@ -59,7 +61,7 @@ public class SelfManageThread {
         }
     }
 
-    static class SlefRunnable implements Runnable{
+    static class SlefRunnable implements Runnable {
         private static int count = 0;
         private final int id = ++count;
         private Thread t = new Thread(this, String.valueOf(id));
