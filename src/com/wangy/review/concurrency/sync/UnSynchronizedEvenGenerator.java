@@ -2,7 +2,6 @@ package com.wangy.review.concurrency.sync;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 
 /**
  * @author wangy
@@ -14,17 +13,22 @@ public class UnSynchronizedEvenGenerator {
         System.out.println("press Ctrl-C to exit");
         EvenGenerator evenGenerator = new EvenGenerator();
         ExecutorService executorService = Executors.newCachedThreadPool();
-        for (int i = 0; i < 3; i++) {
-           executorService.execute(new Thread(new EvenTask(evenGenerator)));
+        for (int i = 0; i < 1; i++) {
+            executorService.execute(new Thread(new EvenTask(evenGenerator)));
         }
         executorService.shutdown();
     }
 
+    /**
+     * 抽象类提供模版方法
+     */
     static abstract class AbstractIntGenerator {
         private volatile boolean canceled = false;
 
+        /** 模版方法在子类中实现 */
         public abstract int next();
 
+        /** 通用方法在抽象类中即可实现 */
         public void cancel() {
             canceled = true;
         }
@@ -34,7 +38,9 @@ public class UnSynchronizedEvenGenerator {
         }
     }
 
-
+    /**
+     * 具体类实现抽象模版的模版方法，因具体业务不同而差异
+     */
     static class EvenGenerator extends AbstractIntGenerator {
         private int even = 0;
 
@@ -47,7 +53,7 @@ public class UnSynchronizedEvenGenerator {
     }
 
     static class EvenTask implements Runnable {
-        private EvenGenerator evenGenerator;
+        private final EvenGenerator evenGenerator;
 
         public EvenTask(EvenGenerator evenGenerator) {
             this.evenGenerator = evenGenerator;
@@ -56,8 +62,10 @@ public class UnSynchronizedEvenGenerator {
         @Override
         public void run() {
             while (!evenGenerator.isCanceled()) {
+                // next()可能被争用
                 int next = evenGenerator.next();
                 if (next % 2 != 0) {
+                    // 这里读到的even值都是中间状态的值
                     System.out.println(Thread.currentThread().toString() + next + " not even!");
                     evenGenerator.cancel();
                 }

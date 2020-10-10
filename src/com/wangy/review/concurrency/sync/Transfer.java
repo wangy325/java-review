@@ -3,19 +3,22 @@ package com.wangy.review.concurrency.sync;
 import java.util.Arrays;
 
 /**
+ * 经典的非同步转账问题
+ *
  * @author wangy
  * @version 1.0
  * @date 2020/5/12 / 15:15
  */
-public class UnsynchronizedTransfer {
+public class Transfer {
     static double INITIAL_MONEY = 1000;
 
     public static void main(String[] args) {
 
         int ACCOUNTS = 100;
         Bank bank = new Bank(ACCOUNTS, INITIAL_MONEY);
-
+        // 增加线程数可以提高出现讹误的概率
         for (int i = 0; i < 2; i++) {
+            // 创建线程时使用共享资源bank
             Thread t = new Thread(new TransferTask(bank));
             t.start();
         }
@@ -34,15 +37,16 @@ public class UnsynchronizedTransfer {
 
         @Override
         public void run() {
-            try {
-                int from = (int) (size * Math.random());
-                int to = (int) (size * Math.random());
-                double amount = maxAmount * Math.random();
-                bank.transfer(from, to, amount);
+            int from = (int) (size * Math.random());
+            int to = (int) (size * Math.random());
+            double amount = maxAmount * Math.random();
+            // 在线程内对共享资源进行修改需要注意安全性
+            bank.transfer(from, to, amount);
+            /*try {
                 Thread.sleep((long) (size * Math.random()));
             } catch (InterruptedException e) {
                 // e.printStackTrace();
-            }
+            }*/
         }
     }
 
@@ -60,13 +64,15 @@ public class UnsynchronizedTransfer {
             if (from == to) return;
             // transfer
             accounts[from] -= amount;
-            System.out.println(Thread.currentThread() + " move away");
-            accounts[to] += amount;
-            System.out.printf("%s: %10.2f from %d to %d, Total Balance: %10.2f%n",
+            // 这个输出语句提高了线程让出cpu时间的概率
+            System.out.printf("%s: transfer %10.2f from %d to %d%n",
                 Thread.currentThread(),
                 amount,
                 from,
-                to,
+                to);
+            accounts[to] += amount;
+            System.out.printf("%s: Total Balance: %10.2f%n",
+                Thread.currentThread(),
                 totalBalance());
         }
 

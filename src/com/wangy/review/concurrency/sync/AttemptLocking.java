@@ -10,22 +10,23 @@ import java.util.concurrent.locks.ReentrantLock;
  * @date 2020/5/13 / 17:04
  */
 public class AttemptLocking {
-    private Lock lock = new ReentrantLock();
+    private final Lock lock = new ReentrantLock();
 
     public static void main(String[] args) throws InterruptedException {
         AttemptLocking al = new AttemptLocking();
         al.untimed();
         al.timed();
+        // 使用后台线程占用锁
         new Thread(){
             {setDaemon(true);}
 
             @Override
             public void run() {
                 al.lock.lock();
-                System.out.println("fetched");
+                System.out.println("locked");
             }
         }.start();
-        // let thread-0 finish
+        // 使主线程让出cpu时间
         Thread.sleep(100);
         al.untimed();
         al.timed();
@@ -33,6 +34,7 @@ public class AttemptLocking {
     }
 
     void untimed() {
+        // 尝试获取锁并且立即返回
         boolean b = lock.tryLock();
         try {
             System.out.println("tryLock(): " + b);
