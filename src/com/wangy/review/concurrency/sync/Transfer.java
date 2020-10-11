@@ -11,10 +11,15 @@ import java.util.Arrays;
  */
 public class Transfer {
     static double INITIAL_MONEY = 1000;
+    static int ACCOUNTS = 100;
 
     public static void main(String[] args) {
 
-        int ACCOUNTS = 100;
+        Transfer t = new Transfer();
+        t.test();
+    }
+
+    void test() {
         Bank bank = new Bank(ACCOUNTS, INITIAL_MONEY);
         // 增加线程数可以提高出现讹误的概率
         for (int i = 0; i < 2; i++) {
@@ -22,13 +27,13 @@ public class Transfer {
             Thread t = new Thread(new TransferTask(bank));
             t.start();
         }
-
     }
 
+    /** 使用静态内部类是为了后续获取实例更方便（不需要外围类实例） */
     static class TransferTask implements Runnable {
-        private Bank bank;
-        private int size;
-        private double maxAmount = INITIAL_MONEY;
+        private final Bank bank;
+        private final int size;
+        private final double maxAmount = INITIAL_MONEY;
 
         public TransferTask(Bank bank) {
             this.bank = bank;
@@ -37,21 +42,22 @@ public class Transfer {
 
         @Override
         public void run() {
+            //没有访问共享资源情况下无需考虑线程安全问题
             int from = (int) (size * Math.random());
             int to = (int) (size * Math.random());
+            // 如果修改转账金额，提防出现死锁
+//            double amount = maxAmount * (Math.random() + Math.random());
             double amount = maxAmount * Math.random();
-            // 在线程内对共享资源进行修改需要注意安全性
-            bank.transfer(from, to, amount);
-            /*try {
-                Thread.sleep((long) (size * Math.random()));
-            } catch (InterruptedException e) {
-                // e.printStackTrace();
-            }*/
+            try {
+                bank.transfer(from, to, amount);
+            } catch (Exception e) {
+                // ignore
+            }
         }
     }
 
     static class Bank {
-        private final double[] accounts;
+        protected final double[] accounts;
 
         public Bank(int accountCount, double money) {
             // initialize bank account
@@ -59,7 +65,7 @@ public class Transfer {
             Arrays.fill(accounts, money);
         }
 
-        public void transfer(int from, int to, double amount) {
+        protected void transfer(int from, int to, double amount) throws Exception {
             if (accounts[from] < amount) return;
             if (from == to) return;
             // transfer
@@ -76,7 +82,7 @@ public class Transfer {
                 totalBalance());
         }
 
-        private double totalBalance() {
+        protected double totalBalance() {
             double sum = 0;
             for (double a : accounts) {
                 sum += a;
@@ -84,7 +90,7 @@ public class Transfer {
             return sum;
         }
 
-        int size() {
+        public int size() {
             return accounts.length;
         }
     }

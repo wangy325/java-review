@@ -17,7 +17,7 @@ public class TransferWithLock {
 
     static double INITIAL_MONEY = 1000;
     static int ACCOUNTS = 100;
-    private Bank bank = new Bank(ACCOUNTS, INITIAL_MONEY);
+    private BankLock bank = new BankLock(ACCOUNTS, INITIAL_MONEY);
 
     public static void main(String[] args) {
         TransferWithLock twl = new TransferWithLock();
@@ -27,45 +27,22 @@ public class TransferWithLock {
     void testTransfer() {
         ExecutorService executorService = Executors.newCachedThreadPool();
         for (int i = 0; i < 10; i++) {
-            executorService.execute(new TransferTask(bank));
+            executorService.execute(new Transfer.TransferTask(bank));
         }
         executorService.shutdown();
     }
 
-    class TransferTask implements Runnable {
-        private Bank bank;
-        private int size;
-        private double maxAmount = INITIAL_MONEY;
-
-        public TransferTask(Bank bank) {
-            this.bank = bank;
-            this.size = bank.size();
-        }
-
-        @Override
-        public void run() {
-            // 没有访问共享资源情况下无需考虑线程安全问题
-            int from = (int) (size * Math.random());
-            int to = (int) (size * Math.random());
-            double amount = maxAmount * Math.random();
-            // 访问共享资源需要考虑线程安全
-            bank.transfer(from, to, amount);
-        }
-    }
-
-    class Bank {
-        private final double[] accounts;
+    static class BankLock extends Transfer.Bank{
         // lock
-        private final ReentrantLock lock;
+        protected final ReentrantLock lock;
 
-        public Bank(int accountCount, double money) {
-            // initialize bank account
-            accounts = new double[accountCount];
-            Arrays.fill(accounts, money);
+        public BankLock(int accountCount, double money) {
+            super(accountCount,money);
             lock = new ReentrantLock();
         }
 
-        public void transfer(int from, int to, double amount) {
+        @Override
+        public void transfer(int from, int to, double amount) throws Exception {
             lock.lock();
             try {
                 if (accounts[from] < amount) return;
@@ -87,7 +64,8 @@ public class TransferWithLock {
             }
         }
 
-        private double totalBalance() {
+        @Override
+        public double totalBalance() {
             // 是否加锁应取决于资源是否共享
             // 在此类的情况下，totalBalance方法不需要加锁
             // 因为此方法在transfer()方法中调用，而transfer()方法是序列化访问的（加锁）的
@@ -105,10 +83,6 @@ public class TransferWithLock {
             } finally {
                 lock.unlock();
             }
-        }
-
-        int size() {
-            return accounts.length;
         }
     }
 

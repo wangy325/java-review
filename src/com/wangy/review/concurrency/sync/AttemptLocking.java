@@ -16,7 +16,7 @@ public class AttemptLocking {
         AttemptLocking al = new AttemptLocking();
         al.untimed();
         al.timed();
-        // 使用后台线程占用锁
+        // 这是一个匿名类 使用后台线程占用锁
         new Thread(){
             {setDaemon(true);}
 
@@ -26,6 +26,7 @@ public class AttemptLocking {
                 System.out.println("locked");
             }
         }.start();
+
         // 使主线程让出cpu时间
         Thread.sleep(100);
         al.untimed();
