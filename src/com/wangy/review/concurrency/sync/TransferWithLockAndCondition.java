@@ -60,7 +60,7 @@ public class TransferWithLockAndCondition {
         public void transfer(int from, int to, double amount) throws InterruptedException {
             lock.lock();
             try {
-                // 如果账户余额不够则等余额够了再转账
+                // 如果账户余额不够则等余额够了再转账 可能出现死锁
                 if (accounts[from] < amount) {
                     // could be interrupted
                     suficient.await();

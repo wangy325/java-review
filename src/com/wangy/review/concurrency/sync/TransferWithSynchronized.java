@@ -32,7 +32,7 @@ public class TransferWithSynchronized {
 
         @Override
         public synchronized void transfer(int from, int to, double amount) throws InterruptedException {
-            if (accounts[from] < amount) wait();  // can be interrupted
+            if (accounts[from] < amount) wait();  // can be interrupted 可能出现死锁
             if (from == to) return;
             // transfer
             accounts[from] -= amount;

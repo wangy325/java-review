@@ -6,25 +6,32 @@ import java.util.concurrent.Executors;
 /**
  * @author wangy
  * @version 1.0
- * @date 2020/5/13 / 23:58
+ * @date 2020/5/12 / 17:11
  */
-public class SynchronizedEvenGeneratorWithIntrinsicLock {
+public class EvenGenerator {
     public static void main(String[] args) {
         System.out.println("press Ctrl-C to exit");
-        EvenGenerator evenGenerator = new EvenGenerator();
+        Generator evenGenerator = new Generator();
         ExecutorService executorService = Executors.newCachedThreadPool();
-        for (int i = 0; i < 2; i++) {
+        // 当线程数为1时，程序不会出现讹误
+        for (int i = 0; i < 1; i++) {
             executorService.execute(new Thread(new EvenTask(evenGenerator)));
         }
         executorService.shutdown();
     }
 
+    /**
+     * 抽象类提供模版方法
+     */
     static abstract class AbstractIntGenerator {
         private volatile boolean canceled = false;
 
+        /** 模版方法在子类中实现 */
         public abstract int next();
 
+        /** 通用方法在抽象类中即可实现 */
         public void cancel() {
+            // 基础类型的操作是原子的
             canceled = true;
         }
 
@@ -33,36 +40,36 @@ public class SynchronizedEvenGeneratorWithIntrinsicLock {
         }
     }
 
-
-    static class EvenGenerator extends AbstractIntGenerator {
-        private Integer even = 0;
-        private Object lock = new Object();
+    /**
+     * 具体类实现抽象模版的模版方法，因具体业务不同而差异
+     */
+    static class Generator extends AbstractIntGenerator {
+        private int even = 0;
 
         @Override
         public int next() {
-            synchronized (lock) {
-                ++even;
-                Thread.yield();
-                ++even;
-                // the return statement is ~~not~~ atomic ~~either~~
-                return even;
-            }
+            ++even;  // danger here!
+            ++even;
+            return even;
         }
     }
 
     static class EvenTask implements Runnable {
-        private EvenGenerator evenGenerator;
+        private final Generator evenGenerator;
 
-        public EvenTask(EvenGenerator evenGenerator) {
+        public EvenTask(Generator evenGenerator) {
             this.evenGenerator = evenGenerator;
         }
 
         @Override
         public void run() {
             while (!evenGenerator.isCanceled()) {
+                // next()可能被争用
                 int next = evenGenerator.next();
                 if (next % 2 != 0) {
+                    // 这里读到的even值都是中间状态的值
                     System.out.println(Thread.currentThread().toString() + next + " not even!");
+                    //
                     evenGenerator.cancel();
                 }
             }
