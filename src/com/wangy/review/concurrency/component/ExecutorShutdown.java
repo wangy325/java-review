@@ -84,6 +84,8 @@ public class ExecutorShutdown {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        // 此处应该要关闭执行器
+        service.shutdownNow();
         System.out.println("task queue: " + service.getQueue());
         System.out.println("is executor shutdown? " + service.isShutdown());
         System.out.println("is executor terminated? " + service.isTerminated());
