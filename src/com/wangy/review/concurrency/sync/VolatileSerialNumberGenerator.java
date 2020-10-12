@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
  * @author wangy
  * @version 1.0
  * @date 2020/5/16 / 18:03
- * @see AtomicClassTest
+ * @see AtomicIntegerTest
  */
 public class VolatileSerialNumberGenerator {
     private static final int SIZE = 10;
