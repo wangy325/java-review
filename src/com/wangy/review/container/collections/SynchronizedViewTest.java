@@ -53,7 +53,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 上，上述逻辑等价于
  * <PRE>
  *     int y = list.get(0) + i;
- *     // 可以被中断
+ *     // 可以被cpu调度器剥夺运行权限
  *     list.set(0,y);
  * </PRE>
  * 这样会导致集合的值“滞后”更新，因此测试下来，发现出现讹误的情况都是最后的值&lt;2450
@@ -85,6 +85,7 @@ public class SynchronizedViewTest {
         add(0);
     }};
 
+    /**原子类计数器*/
     private AtomicInteger cal_count = new AtomicInteger(0);
 
     public static void main(String[] args) throws InterruptedException {
@@ -113,7 +114,7 @@ public class SynchronizedViewTest {
     }
 
     /**
-     * 线程不安全的方法，如果使用线程安全的集合，可以获得预期的结果
+     * 使用多线程对集合内容进行修改，查看不同类型集合的表现
      *
      * @param list
      */
