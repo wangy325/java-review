@@ -67,19 +67,14 @@ public class TicketIssue {
                 synchronized (tick) {
                     if (tick.getTick()) {
                         tickGet.incrementAndGet();
-//                        System.out.println(Thread.currentThread().getName() + " 抢到票, 余票数: " + tick.getTickCount());
+                        System.out.println(Thread.currentThread().getName() + " 抢到票, 余票数: " + tick.getTickCount());
                         try {
-                            // 给其他线程抢票机会
-                            // 此处不能使用sleep，因sleep方法不释放tick的锁，其他线程无法运行同步方法
-                            tick.wait();
+                            tick.wait(10);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
                     } else {
-                        tick.notifyAll();
-                        if (!tick.isTickSupply){
-                            break;
-                        }
+                        if (!tick.isTickSupply) break;
                     }
                 }
             }
@@ -92,34 +87,25 @@ public class TicketIssue {
         for (int i = 0; i < threadCount; i++) {
             pool.execute(new Purchase(tick));
         }
-        // 无法终止执行器执行无限循环的任务
         pool.shutdown();
-        pool.awaitTermination(executeTime, TimeUnit.SECONDS);
-
-            System.out.println("已购票数：" + tickGet.get());
-            System.out.println("余票数：" + tick.getTickCount());
     }
 
     /** 放票 */
     void singleSupply(int count) {
 
         new Thread(() -> {
-            while (true) {
+            for (int i = 0; i < count; i++) {
                 // TODO：此处直接非同步修改域是否安全？
-                if (tick.getTickCount() < count) {
-                    tick.tickCount++;
-                    // 降低出票速率
-                    /*try {
-                        TimeUnit.MILLISECONDS.sleep(100);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }*/
-                } else {
-                    // 停止放票
-                    tick.cancelSupply();
-                    break;
+                tick.tickCount++;
+                // 降低出票速率
+                try {
+                    TimeUnit.MILLISECONDS.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
+            // 停止放票
+            tick.cancelSupply();
         }).start();
     }
 
@@ -127,8 +113,8 @@ public class TicketIssue {
     public static void main(String[] args) throws InterruptedException {
 
         TicketIssue npsd = new TicketIssue();
-        npsd.singleSupply(20);
-        npsd.multiPurchase(2, 10);
+        npsd.singleSupply(10);
+        npsd.multiPurchase(11, 10);
 //        System.exit(0);
     }
 }
