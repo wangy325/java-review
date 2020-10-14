@@ -6,7 +6,31 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 如何关闭线程池
+ * 如何关闭线程池<br>
+ * 关于执行器的状态，参考{@link ThreadPoolExecutor}中关于运行状态的描述：
+ * <pre>
+ *      The runState provides the main lifecycle control, taking on values:
+ *
+ *         RUNNING:  Accept new tasks and process queued tasks
+ *         SHUTDOWN: Don't accept new tasks, but process queued tasks
+ *         STOP:     Don't accept new tasks, don't process queued tasks,
+ *                   and interrupt in-progress tasks
+ *         TIDYING:  All tasks have terminated, workerCount is zero,
+ *                   the thread transitioning to state TIDYING
+ *                   will run the terminated() hook method
+ *         TERMINATED: terminated() has completed
+ *
+ * </pre>
+ * 其中，{@link ThreadPoolExecutor#shutdown()}方法对应shutdown，
+ * {@link ThreadPoolExecutor#shutdownNow()}对应stop
+ * 可以看到，shutdown方法和shutdownNow方法的差别很明显了，值得一提的是，
+ * 后者虽然尝试停止线程，但是如果正在执行的任务不响应interrupt方法，
+ * 那么线程也无法完全terminate(终止线程的terminate()方法无法调用)，
+ * 正如shutdownNow方法文档里描述的那样：
+ * <pre>
+ * This implementation cancels tasks via {@link Thread#interrupt},
+ * so any task that fails to respond to interrupts may never terminate.
+ * </pre>
  *
  * @author wangy
  * @version 1.0
@@ -74,7 +98,6 @@ public class ExecutorShutdown {
      * <br>超时之后，活动任务和队列中的任务仍然会异步执行完毕
      * <b>这个方法不会关闭线程池，不要单独使用这个方法！</b>
      * </p>
-     *
      */
     void awaitTermination() {
         service.execute(new ComplexTask());
