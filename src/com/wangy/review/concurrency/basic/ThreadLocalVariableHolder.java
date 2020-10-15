@@ -1,10 +1,10 @@
-package com.wangy.review.concurrency.sync;
+package com.wangy.review.concurrency.basic;
 
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 /**
- * a thread local sample
+ * 线程本地变量的简单使用
  *
  * @author wangy
  * @version 1.0
@@ -26,7 +26,7 @@ public class ThreadLocalVariableHolder {
 
             @Override
             protected synchronized Integer initialValue() {
-                return r.nextInt(100);
+                return r.nextInt(10);
             }
         };
 

@@ -1,5 +1,7 @@
 package com.wangy.review.concurrency.sync;
 
+import lombok.val;
+
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -8,10 +10,10 @@ import java.util.concurrent.TimeUnit;
  * @author wangy
  * @version 1.0
  * @date 2020/5/15 / 17:15
- * @see EvenGeneratorWithIntrinsicLock
+ * @see EvenGeneratorWithAdhocLock
  */
 public class AtomicTest implements Runnable {
-    private int i = 0;
+    private volatile int i = 0;
 
     public int getValue() {
         // 虽然这个方法只有一句原子性操作

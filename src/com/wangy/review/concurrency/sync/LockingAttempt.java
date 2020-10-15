@@ -9,11 +9,11 @@ import java.util.concurrent.locks.ReentrantLock;
  * @version 1.0
  * @date 2020/5/13 / 17:04
  */
-public class AttemptLocking {
+public class LockingAttempt {
     private final Lock lock = new ReentrantLock();
 
     public static void main(String[] args) throws InterruptedException {
-        AttemptLocking al = new AttemptLocking();
+        LockingAttempt al = new LockingAttempt();
         al.untimed();
         al.timed();
         // 这是一个匿名类 使用后台线程占用锁

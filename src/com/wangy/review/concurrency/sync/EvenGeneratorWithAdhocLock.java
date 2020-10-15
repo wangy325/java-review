@@ -8,7 +8,7 @@ import java.util.concurrent.Executors;
  * @version 1.0
  * @date 2020/5/13 / 23:58
  */
-public class EvenGeneratorWithIntrinsicLock {
+public class EvenGeneratorWithAdhocLock {
     public static void main(String[] args) {
         System.out.println("press Ctrl-C to exit");
         Generator evenGenerator = new Generator();

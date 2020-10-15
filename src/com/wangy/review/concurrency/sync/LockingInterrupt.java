@@ -1,6 +1,5 @@
 package com.wangy.review.concurrency.sync;
 
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -11,11 +10,12 @@ import java.util.concurrent.locks.ReentrantLock;
  * @version 1.0
  * @date 2020/5/18 / 12:33
  */
-public class MutexBlockedInterrupt {
+public class LockingInterrupt {
 
+    // 可重入锁获取锁的时候可以被中断
     private Lock lock = new ReentrantLock();
 
-    public MutexBlockedInterrupt() {
+    public LockingInterrupt() {
         // lock the instance once constructed
         lock.lock();
     }
@@ -31,7 +31,7 @@ public class MutexBlockedInterrupt {
     }
 
     static class MutexTask implements Runnable{
-        MutexBlockedInterrupt mbi = new MutexBlockedInterrupt();
+        LockingInterrupt mbi = new LockingInterrupt();
         @Override
         public void run() {
             System.out.println("waiting for f()");
@@ -43,8 +43,7 @@ public class MutexBlockedInterrupt {
     public static void main(String[] args) throws InterruptedException {
         Thread t = new Thread(new MutexTask());
         t.start();
-        TimeUnit.MILLISECONDS.sleep(100);
-        System.out.println("invoke t.interrupt()");
+        // 中断t
         t.interrupt();
     }
 }

@@ -1,6 +1,5 @@
-package com.wangy.review.concurrency.sync;
+package com.wangy.review.concurrency.basic;
 
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -10,7 +9,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * @date 2020/5/14 / 22:12
  */
 public class SynchronizedOnStaticDomain extends Thread {
-    private static AtomicInteger count = new AtomicInteger(0);
+    private static Integer count = 0;
     private final static Lock LOCK = new ReentrantLock();
 
     public SynchronizedOnStaticDomain() {
@@ -31,18 +30,19 @@ public class SynchronizedOnStaticDomain extends Thread {
     }*/
 
     /** or use this */
-//    @Override
-//    public void run() {
-//        synchronized (SynchronizedOnStaticDomain.class){
-//            for (int i = 0; i < 1000; i++) {
-//                count++;
-//            }
-//            System.out.println(Thread.currentThread() + "finished compute: " + count);
-//        }
-//    }
+    @Override
+    public void run() {
+        synchronized (LOCK){
+            for (int i = 0; i < 500; i++) {
+                count++;
+                count++;
+            }
+            System.out.println(Thread.currentThread() + "finished compute: " + count);
+        }
+    }
 
     /** or usr atomicInteger*/
-    @Override
+/*    @Override
     public void run() {
             for (int i = 0; i < 500; i++) {
                 count.getAndIncrement();
@@ -50,7 +50,7 @@ public class SynchronizedOnStaticDomain extends Thread {
             }
             // not all out put count are even!
             System.out.println(Thread.currentThread() + "finished compute: " + count);
-    }
+    }*/
 
     public static void main(String[] args) {
         for (int i = 0; i < 100; i++) {
