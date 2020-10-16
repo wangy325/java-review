@@ -2,35 +2,34 @@ package com.wangy.review.concurrency.sync;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.SneakyThrows;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 
 /**
- * 在使用同步时，将域设置为"私有的"是非常有必要的，否则，synchronized关键字不能组织其他任务直接访问域
- *
- * 在任务上使用同步
+ * 在资源上使用同步
  *
  * @author wangy
  * @version 1.0
- * @date 2020/5/14 / 16:55
+ * @date 2020/10/16 / 18:55
  */
-public class TicketIssue {
+public class TicketIssuePs {
 
-    protected final Tick tick = new Tick(0);
+    private final Tick tick = new Tick(0);
     private final List<Future<TV>> resultList = new ArrayList<>();
 
     static class Tick {
         // 一般将共享资源设置为私有以降低同步问题的复杂性
-        int tickCount;
-        boolean isTickSupply = true;
+        volatile int tickCount;
+        volatile boolean isTickSupply = true;
 
         public Tick(int tick) {
             this.tickCount = tick;
         }
 
-        boolean getTick() {
+        synchronized boolean getTick() {
             if (isTick()) {
                 tickCount--;
                 if (getTickCount() < 0) {
@@ -77,28 +76,20 @@ public class TicketIssue {
             this.tick = tick;
         }
 
-        /*
-            此处在run/call方法里同步
-         */
+        @SneakyThrows
         @Override
         public TV call() {
             while (true) {
-                synchronized (tick) {
-                    TV tv = tl.get();
-                    tv.setT(Thread.currentThread());
-                    if (tick.getTick()) {
-                        tv.setV((tv.getV() == null ? 0 : tv.getV()) + 1);
-                        tl.set(tv);
-//                        System.out.println(Thread.currentThread().getName() + " 抢到票, 余票数: " + tick.getTickCount());
-                        try {
-                            // 给其他线程机会
-                            tick.wait(10);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        if (!tick.isTickSupply) break;
-                    }
+                TV tv = tl.get();
+                tv.setT(Thread.currentThread());
+                if (tick.getTick()) {
+                    tv.setV((tv.getV() == null ? 0 : tv.getV()) + 1);
+                    tl.set(tv);
+//                    System.out.println(Thread.currentThread().getName() + " 抢到票, 余票数: " + tick.getTickCount());
+                    // 给其他线程机会
+                    TimeUnit.MILLISECONDS.sleep(1);
+                } else {
+                    if (!tick.isTickSupply) break;
                 }
             }
             return tl.get();
@@ -109,7 +100,7 @@ public class TicketIssue {
 
         ExecutorService pool = Executors.newCachedThreadPool();
         for (int i = 0; i < threadCount; i++) {
-            Future<TV> future = pool.submit(new Purchase(tick));
+            Future<TV> future = pool.submit(new TicketIssuePs.Purchase(tick));
             resultList.add(future);
         }
         pool.shutdown();
@@ -133,7 +124,7 @@ public class TicketIssue {
                 tick.tickCount++;
                 // 降低出票速率
                 try {
-                    TimeUnit.MILLISECONDS.sleep(2);
+                    TimeUnit.MILLISECONDS.sleep(10);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -145,8 +136,8 @@ public class TicketIssue {
 
 
     public static void main(String[] args) throws Exception {
+        TicketIssuePs ti = new TicketIssuePs();
 
-        TicketIssue ti = new TicketIssue();
         ti.singleSupply(10000);
         ti.multiPurchase(50);
     }
