@@ -14,8 +14,8 @@ public class EvenGenerator {
         Generator evenGenerator = new Generator();
         ExecutorService executorService = Executors.newCachedThreadPool();
         // 当线程数为1时，程序不会出现讹误
-        for (int i = 0; i < 1; i++) {
-            executorService.execute(new Thread(new EvenTask(evenGenerator)));
+        for (int i = 0; i < 3; i++) {
+            executorService.execute(new EvenTask(evenGenerator));
         }
         executorService.shutdown();
     }
