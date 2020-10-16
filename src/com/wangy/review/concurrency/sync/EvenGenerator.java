@@ -9,21 +9,12 @@ import java.util.concurrent.Executors;
  * @date 2020/5/12 / 17:11
  */
 public class EvenGenerator {
-    public static void main(String[] args) {
-        System.out.println("press Ctrl-C to exit");
-        Generator evenGenerator = new Generator();
-        ExecutorService executorService = Executors.newCachedThreadPool();
-        // 当线程数为1时，程序不会出现讹误
-        for (int i = 0; i < 3; i++) {
-            executorService.execute(new EvenTask(evenGenerator));
-        }
-        executorService.shutdown();
-    }
 
     /**
      * 抽象类提供模版方法
      */
     static abstract class AbstractIntGenerator {
+        // volatile关键字意义不明显
         private volatile boolean canceled = false;
 
         /** 模版方法在子类中实现 */
@@ -74,5 +65,16 @@ public class EvenGenerator {
                 }
             }
         }
+    }
+
+    public static void main(String[] args) {
+        System.out.println("press Ctrl-C to exit");
+        Generator evenGenerator = new Generator();
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        // 当线程数为1时，程序不会出现讹误
+        for (int i = 0; i < 3; i++) {
+            executorService.execute(new EvenTask(evenGenerator));
+        }
+        executorService.shutdown();
     }
 }

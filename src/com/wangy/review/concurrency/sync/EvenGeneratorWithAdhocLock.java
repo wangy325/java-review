@@ -9,17 +9,6 @@ import java.util.concurrent.Executors;
  * @date 2020/5/13 / 23:58
  */
 public class EvenGeneratorWithAdhocLock {
-    public static void main(String[] args) {
-        System.out.println("press Ctrl-C to exit");
-        Generator evenGenerator = new Generator();
-        ExecutorService executorService = Executors.newCachedThreadPool();
-        for (int i = 0; i < 20; i++) {
-            executorService.execute(new Thread(new EvenTask(evenGenerator)));
-        }
-        executorService.shutdown();
-    }
-
-
 
     static class Generator extends EvenGenerator.AbstractIntGenerator {
         private Integer even = 0;
@@ -27,6 +16,7 @@ public class EvenGeneratorWithAdhocLock {
 
         @Override
         public int next() {
+            // 在this和lock上同步效果一致
 //             synchronized (this){
             synchronized (lock) {
                 ++even;
@@ -54,5 +44,15 @@ public class EvenGeneratorWithAdhocLock {
                 }
             }
         }
+    }
+
+    public static void main(String[] args) {
+        System.out.println("press Ctrl-C to exit");
+        Generator evenGenerator = new Generator();
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        for (int i = 0; i < 20; i++) {
+            executorService.execute(new EvenTask(evenGenerator));
+        }
+        executorService.shutdown();
     }
 }

@@ -1,4 +1,4 @@
-package com.wangy.review.concurrency.basic;
+package com.wangy.review.concurrency.sync;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;

@@ -33,7 +33,7 @@ public class VolatileEffectLittle {
      * 此容器用于存放{@link VolatileEffectLittle#nextSerialNumber}类生成的数
      * 每生成一个序列数，将其存放至容器中
      */
-    class CircularSet {
+    static class CircularSet {
         private int[] array;
         private int len;
         private int index = 0;
@@ -59,23 +59,24 @@ public class VolatileEffectLittle {
         }
     }
 
+    /**
+     * 此逻辑下，将shutdown设置为volatile以期望线程结束时shutdownKeeper的值总是1
+     * 实际上期望并不能满足
+     * 诚然，在线程1出现第一次讹误时，shutdown被置为true，但是volatile只能保证在其之后开始运行的线程2
+     * 对shutdown的读是可见的
+     * 但并不能保证线程3总是在线程1修改完成shutdown之后再去读取，因此
+     * shutdownKeeper的值还是可能>1
+     * 修改方法为同步while语句块
+     * 一旦同步while语句快之后，volatile关键字的作用就被削弱了（被同步取代）
+     * 要注意同步监视器的选择，可以选择serials的监视器而不能选择this
+     * this是SerialNumberChecker对象，而每个线程的都对应一个this！
+     */
     class SerialNumberChecker implements Runnable {
         @SneakyThrows
         @Override
         public void run() {
-            /*
-             * 此逻辑下，将shutdown设置为volatile以期望线程结束时shutdownKeeper的值总是1
-             * 实际上期望并不能满足
-             * 诚然，在线程1出现第一次讹误时，shutdown被置为true，但是volatile只能保证在其之后的线程2
-             * 对shutdown的读是可见的
-             * 但并不能保证线程3总是在线程1修改完成shutdown之后再去读取，因此
-             * shutdownKeeper的值还是可能>1
-             * 修改方法为同步while语句块
-             * 一旦同步while语句快之后，volatile关键字的作用就被削弱了（被同步取代）
-             * 要注意同步监视器的选择，可以选择serials的监视器而不能选择this
-             * this是SerialNumberChecker对象，而每个线程的都对应一个this！
-             */
             while (!shutdown) {
+                // 可能的剥夺运行权点
                 //由于自增方法没有同步，多线程读写的时候出现讹误
                 int nextSerialNumber = nextSerialNumber(); // unlock
                 if (serials.contains(nextSerialNumber)) {
@@ -85,17 +86,6 @@ public class VolatileEffectLittle {
                     break;
                 }
                 serials.add(nextSerialNumber);
-            }
-        }
-    }
-
-    public static void main(String[] args) {
-        // 因为shutdown安全性的问题，此循环终会结束
-        while (true) {
-            int i = test();
-            if (i > 1) {
-                System.out.println(i);
-                break;
             }
         }
     }
@@ -112,5 +102,17 @@ public class VolatileEffectLittle {
         // 等待pool任务执行完
         while (Thread.activeCount() > 2) Thread.yield();
         return vfl.shutdownKeeper.get();
+    }
+
+
+    public static void main(String[] args) {
+        // 因为shutdown安全性的问题，此循环终会结束
+        while (true) {
+            int i = test();
+            if (i > 1) {
+                System.out.println("shutdown 置位次数" + i);
+                break;
+            }
+        }
     }
 }

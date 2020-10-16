@@ -2,7 +2,14 @@ package com.wangy.review.concurrency.sync;
 
 /**
  * volatile 不能保证原子性<br>
- * 在本例中你将看到使用无锁机制保证线程有序运行
+ * 在本例中你将看到使用无锁机制保证线程有序运行<br>
+ *
+ * 关键字volatile
+ * <ul>
+ * <li>保证可见性</li>
+ * <li>取消指令重排</li>
+ * <li>不保证原子性</li>
+ * </ul>
  *
  * @author wangy
  * @version 1.0
@@ -20,7 +27,7 @@ public class VolatileIsNotAtomic {
 
     void singleThread() throws InterruptedException {
         Thread thread = new Thread(() -> {
-            for (int i = 0; i < 10000; i++) {
+            for (int i = 0; i < 100; i++) {
                 increase();
             }
         });
@@ -59,6 +66,7 @@ public class VolatileIsNotAtomic {
             });
             thread.start();
             // 使用join()保证有序性，此时可以不需要同步
+            // join() 保证了happens-before原则
             thread.join();
         }
         // 主线程等待所有的子线程结束
@@ -68,8 +76,8 @@ public class VolatileIsNotAtomic {
     public static void main(String[] args) throws InterruptedException {
         VolatileIsNotAtomic va = new VolatileIsNotAtomic();
 //        va.singleThread();
-//        va.multiThread1();
-        va.multiThread2();
+        va.multiThread1();
+//        va.multiThread2();
 
 
     }
