@@ -9,6 +9,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
+ *
+ * <b>10/20注：在代码中使用多个对象的内部锁会降低代码的易读性</b><br>
+ *
  * 比较使用synchronized保护方法和保护代码块的性能，在此例中将看到：
  * <ul>
  *     <li>使用线程安全的类包装一个线程不安全的类:
@@ -22,10 +25,10 @@ import java.util.concurrent.atomic.AtomicInteger;
  * </ul>
  * 典型的输出为：
  * <pre>
- *     po1: Pair: Pair{x=9231984, y=9231984} checkCount = 3199898
- *     po2: Pair: Pair{x=3177449, y=3177449} checkCount = 9128836
+ *    po1: Pair: Pair{x=127, y=127} checkCount = 19199
+ *    po2: Pair: Pair{x=128, y=128} checkCount = 63835306
  * </pre>
- * 其中<i><b>po1</b></i>对方法同步，<i><b>po2</b></i>对代码块同步，
+ * 其中<i><b>po1</b></i>使用同步方法，<i><b>po2</b></i>使用同步代码块，
  * <i><b>po1</b></i>的<i>checkCount</i>不允许大于<i><b>po2</b></i>的<i>checkCount</i>,这是因为
  * <i><b>po1</b></i>对方法同步会更长时间的占用锁，此情况下<i>checkCount</i>线程的<code>getPair()</code>
  * 方法所能获取的锁的次数自然会降低
@@ -93,10 +96,11 @@ public class CriticalSection {
             return new Pair(p.getX(), p.getY());
         }
 
+        // 因使用了同步集合，store方法是同步的
         protected void store(Pair p) {
             storage.add(p);
             try {
-                TimeUnit.MILLISECONDS.sleep(50);
+                TimeUnit.MILLISECONDS.sleep(5);
             } catch (InterruptedException e) {
                 // ignore
             }
@@ -119,18 +123,13 @@ public class CriticalSection {
 
         @Override
         public void increment() {
-            Pair tmp;
+//            Pair tmp;
             synchronized (this) {
                 p.incrementX();
                 p.incrementY();
-                tmp = getPair();
             }
-            /*
-             * 使用storage为了保证同步代码块不包含此方法中所有代码
-             * 并且此方法是同步的
-             * TIJ中此法使用了中间变量tmp，此处的问题在哪里？
-             */
-            store(tmp);
+            // 此语句置入同步块中将会影响checkCount的值
+            store(getPair());
         }
     }
 

@@ -2,8 +2,8 @@ package com.wangy.review.concurrency.sync;
 
 /**
  * volatile 不能保证原子性<br>
- * 在本例中你将看到使用无锁机制保证线程有序运行<br>
- *
+ * 在本例中你将看到使用无锁机制保证线程有序访问<br>
+ * <p>
  * 关键字volatile
  * <ul>
  * <li>保证可见性</li>
@@ -15,7 +15,7 @@ package com.wangy.review.concurrency.sync;
  * @version 1.0
  * @date 2020/5/16 / 15:45
  */
-public class VolatileIsNotAtomic {
+public class SaWithoutSynchronized {
 
     private int sum;
 
@@ -25,17 +25,20 @@ public class VolatileIsNotAtomic {
     }
 
 
+    /** 单线程模式 */
     void singleThread() throws InterruptedException {
-        Thread thread = new Thread(() -> {
+        Thread task = new Thread(() -> {
             for (int i = 0; i < 100; i++) {
                 increase();
             }
         });
-        thread.start();
-        thread.join();
+        task.start();
+        // 等待task执行完成
+        task.join();
         System.out.println(sum);
     }
 
+    /** 线程mt派生出10个线程 */
     void multiThread1() throws InterruptedException {
         Thread mt = new Thread(() -> {
             for (int i = 0; i < 10; i++) {
@@ -57,6 +60,7 @@ public class VolatileIsNotAtomic {
         System.out.println(sum);
     }
 
+    /** 上一种方式的简化版 */
     void multiThread2() throws InterruptedException {
         for (int i = 0; i < 10; i++) {
             Thread thread = new Thread(() -> {
@@ -74,10 +78,10 @@ public class VolatileIsNotAtomic {
     }
 
     public static void main(String[] args) throws InterruptedException {
-        VolatileIsNotAtomic va = new VolatileIsNotAtomic();
+        SaWithoutSynchronized va = new SaWithoutSynchronized();
 //        va.singleThread();
-        va.multiThread1();
-//        va.multiThread2();
+//        va.multiThread1();
+        va.multiThread2();
 
 
     }

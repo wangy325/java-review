@@ -1,11 +1,14 @@
 package com.wangy.review.concurrency.sync;
 
 /**
+ * DCL(Double-Checked Locking)单例中使用了volatile关键字
+ *
  * @author wangy
  * @version 1.0
  * @date 2020/5/15 / 11:18
  */
 public class DoubleCheckSingleton {
+    /** instance被声明为volatile */
     private static volatile DoubleCheckSingleton instance;
 
     private DoubleCheckSingleton() {
@@ -14,6 +17,7 @@ public class DoubleCheckSingleton {
     /**
      * the evolution of double-check lock:
      * <pre>
+     *     // same as static synchronized method
      *     public static DoubleCheckSingleton getInstance() {
      *         synchronized (DoubleCheckSingleton.class) {
      *             // single check
@@ -55,7 +59,7 @@ public class DoubleCheckSingleton {
 
     public static void main(String[] args) {
         DoubleCheckSingleton instance = getInstance();
-        for (int i = 0; i < 1000; i++) {
+        for (; ; ) {
             new Thread(() -> {
                 DoubleCheckSingleton instance1 = getInstance();
                 if (!instance1.equals(instance)) {
