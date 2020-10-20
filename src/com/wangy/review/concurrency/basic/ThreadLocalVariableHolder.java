@@ -54,7 +54,7 @@ public class ThreadLocalVariableHolder {
 
     public static void main(String[] args) throws InterruptedException {
         for (int i = 0; i < 2; i++) {
-            new Thread(new Thread(new Task())).start();
+            new Thread(new Task()).start();
         }
         TimeUnit.MILLISECONDS.sleep(1);
         System.exit(0);
