@@ -19,7 +19,7 @@ public class WaitOnCondition {
     /**
      * 2个任务，2个线程
      */
-    private boolean tracked = false;
+    private volatile boolean tracked = false;
 
     synchronized void playTrack() throws InterruptedException {
         if (!tracked) {
