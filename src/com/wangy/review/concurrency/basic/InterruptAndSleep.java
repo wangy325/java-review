@@ -13,8 +13,8 @@ public class InterruptAndSleep {
     static Thread apple = new Thread(new InterruptSleepOn(), "apple");
 
     public static void main(String[] args) {
-//        sleepBeforeInterrupt();
-        sleepAfterInterrupt();
+        sleepBeforeInterrupt();
+//        sleepAfterInterrupt();
     }
 
     // 先中断线程
@@ -50,7 +50,7 @@ public class InterruptAndSleep {
     static void sleepAfterInterrupt() {
         apple.start();
         try {
-            Thread.sleep(100);
+            Thread.sleep(5);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -64,9 +64,6 @@ public class InterruptAndSleep {
         protected final int id = count++;
         protected int countDown = 3;
 
-        public InterruptSleep() {
-        }
-
         public void info() {
             System.out.println("id(" + id + " " + Thread.currentThread().getName() + ") ");
         }
@@ -78,7 +75,7 @@ public class InterruptAndSleep {
                     info();
                     // Thread.sleep(100);
                     // Java SE5 or later style
-                    TimeUnit.MILLISECONDS.sleep(100);
+                    TimeUnit.MILLISECONDS.sleep(1);
                 }
                 // 捕获异常时线程run()方法中止
             } catch (InterruptedException e) {
@@ -93,7 +90,7 @@ public class InterruptAndSleep {
             while (countDown-- > 0) {
                 try {
                     info();
-                    TimeUnit.MILLISECONDS.sleep(100);
+                    TimeUnit.MILLISECONDS.sleep(5);
                     // 捕获异常后继续执行run()方法
                 } catch (InterruptedException e) {
                     // e.printStackTrace();
