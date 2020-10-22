@@ -12,6 +12,9 @@ import java.util.concurrent.*;
  * 看起来，{@link FutureTask#cancel(boolean)}方法调用<code>interrupt()</code>之后并没有额外的判断，而是直接返回了true
  * <p>
  * 那么此例中出现的结果和<code>cancel(boolean)</code>方法的关系不大
+ * <p>
+ * 看起来是阻塞的线程没有响应中断
+ *
  * <pre>
  *     if (!(state == NEW && STATE.compareAndSet
  *               (this, NEW, mayInterruptIfRunning ? INTERRUPTING : CANCELLED)))
@@ -55,6 +58,7 @@ public class Interrupting {
         TimeUnit.SECONDS.sleep(3);
         System.exit(0); // ... since last 2 interrupts failed
     }
+
     /** sleep可以被中断 */
     static class SleepBlocked implements Runnable {
         @Override

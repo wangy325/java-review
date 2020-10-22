@@ -43,7 +43,7 @@ public class LockingInterrupt {
     public static void main(String[] args) throws InterruptedException {
         Thread t = new Thread(new MutexTask());
         t.start();
-        // 中断t
+        // 中断t，若不中断，t会一直阻塞
         t.interrupt();
     }
 }
