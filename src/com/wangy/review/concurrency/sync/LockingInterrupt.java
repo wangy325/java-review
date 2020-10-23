@@ -47,3 +47,8 @@ public class LockingInterrupt {
         t.interrupt();
     }
 }
+/*
+waiting for f()
+Interrupted from acquire lock in f()
+Broken out of blocked call
+ *///:~

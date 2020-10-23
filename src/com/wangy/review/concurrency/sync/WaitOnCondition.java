@@ -9,6 +9,12 @@ import java.util.concurrent.TimeUnit;
 /**
  * 在监视器上等待<br>
  * 假设播放之前必须录音，播放之后必须等待再次录音才能继续播放
+ * <p>
+ * 在本例中，线程没有"合适地"被终结，而是使用了
+ * <code>
+ * System.exit(0);
+ * </code>
+ * 来终止程序的运行
  *
  * @author wangy
  * @version 1.0

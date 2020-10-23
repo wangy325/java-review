@@ -15,7 +15,7 @@ package com.wangy.review.concurrency.sync;
  * @version 1.0
  * @date 2020/5/16 / 15:45
  */
-public class SaWithoutSynchronized {
+public class SyncWithoutSynchronized {
 
     private int sum;
 
@@ -28,7 +28,7 @@ public class SaWithoutSynchronized {
     /** 单线程模式 */
     void singleThread() throws InterruptedException {
         Thread task = new Thread(() -> {
-            for (int i = 0; i < 100; i++) {
+            for (int i = 0; i < 10; i++) {
                 increase();
             }
         });
@@ -43,7 +43,7 @@ public class SaWithoutSynchronized {
         Thread mt = new Thread(() -> {
             for (int i = 0; i < 10; i++) {
                 Thread t = new Thread(() -> {
-                    for (int j = 0; j < 10; j++) {
+                    for (int j = 0; j < 1; j++) {
                         increase();
                     }
                 });
@@ -64,7 +64,7 @@ public class SaWithoutSynchronized {
     void multiThread2() throws InterruptedException {
         for (int i = 0; i < 10; i++) {
             Thread thread = new Thread(() -> {
-                for (int j = 0; j < 10; j++) {
+                for (int j = 0; j < 1; j++) {
                     increase();
                 }
             });
@@ -78,7 +78,7 @@ public class SaWithoutSynchronized {
     }
 
     public static void main(String[] args) throws InterruptedException {
-        SaWithoutSynchronized va = new SaWithoutSynchronized();
+        SyncWithoutSynchronized va = new SyncWithoutSynchronized();
 //        va.singleThread();
 //        va.multiThread1();
         va.multiThread2();
