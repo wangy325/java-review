@@ -5,6 +5,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * {@link Wax}的兄弟版本
+ *
  * @author wangy
  * @version 1.0
  * @date 2020/10/24 / 17:28
@@ -12,7 +14,6 @@ import java.util.concurrent.TimeUnit;
 public class Restaurant {
     private Meal meal;
     private volatile int count;
-
 
     static class Meal {
         int orderNum;
@@ -37,21 +38,28 @@ public class Restaurant {
 
         @Override
         public void run() {
-            try {
-                while (!Thread.interrupted()) {
-                    synchronized (rest) {
-                        if (rest.meal != null) {
+            while (!Thread.interrupted()) {
+                synchronized (rest) {
+                    if (rest.meal != null) {
+                        try {
                             rest.wait();
+                        } catch (InterruptedException e) {
+                            System.out.println("Exit Chef by Interrupted");
+                            return;
                         }
-//                        TimeUnit.MILLISECONDS.sleep(100);
-                        rest.meal = new Meal(++rest.count);
-                        rest.notifyAll();
                     }
+
+                    try {
+                        TimeUnit.MILLISECONDS.sleep(100);
+                    } catch (InterruptedException e) {
+                        System.out.println("Exit Chef Sleep by Interrupted");
+                        return;
+                    }
+                    rest.meal = new Meal(++rest.count);
+                    rest.notifyAll();
                 }
-                System.out.println("Exit Chef");
-            } catch (InterruptedException e) {
-                System.out.println("exit chef by interrupted");
             }
+            System.out.println("Exit Chef");
         }
     }
 
@@ -65,21 +73,22 @@ public class Restaurant {
 
         @Override
         public void run() {
-            try {
-                while (!Thread.interrupted()) {
-                    synchronized (rest) {
-                        if (rest.meal == null) {
+            while (!Thread.interrupted()) {
+                synchronized (rest) {
+                    if (rest.meal == null) {
+                        try {
                             rest.wait();
+                        } catch (InterruptedException e) {
+                            System.out.println("Exit Waiter by Interrupted");
+                            return;
                         }
-                        System.out.println("order up: " + rest.meal);
-                        rest.meal = null;
-                        rest.notifyAll();
                     }
+                    System.out.println("order up: " + rest.meal);
+                    rest.meal = null;
+                    rest.notifyAll();
                 }
-                System.out.println("Exit Waiter");
-            } catch (InterruptedException e) {
-                System.out.println("exit waiter by interrupted");
             }
+            System.out.println("Exit Waiter");
         }
     }
 
@@ -90,11 +99,27 @@ public class Restaurant {
         pool.execute(new Chef(restaurant));
 
         while (true) {
-            if (restaurant.count == 10) {
-                pool.shutdownNow();
-                break;
+            synchronized (restaurant) {
+                if (restaurant.count == 10) {
+                    pool.shutdownNow();
+                    break;
+                }
             }
         }
         // end
     }
 }
+/*（sample）
+order up: Meal 1
+order up: Meal 2
+order up: Meal 3
+order up: Meal 4
+order up: Meal 5
+order up: Meal 6
+order up: Meal 7
+order up: Meal 8
+order up: Meal 9
+order up: Meal 10
+exit waiter by interrupted
+Exit Chef
+ *///:~

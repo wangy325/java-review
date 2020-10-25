@@ -28,13 +28,13 @@ public class Wax {
 
         public synchronized void waitForWaxing() throws InterruptedException {
             // waxOn = false时一直等待
-            while (!waxOn)
+            if (!waxOn)
                 wait();
         }
 
         public synchronized void waitForBuffing() throws InterruptedException {
             // waxOn = true时一直等待
-            while (waxOn)
+            if (waxOn)
                 wait();
 
         }
@@ -51,15 +51,15 @@ public class Wax {
         public void run() {
             try {
                 while (!Thread.interrupted()) {
-//                    TimeUnit.MILLISECONDS.sleep(100);
+                    TimeUnit.MILLISECONDS.sleep(100);
                     System.out.print("Wax On! ");
                     car.waxed();
                     car.waitForBuffing();
                 }
+                System.out.println("Ending Wax On task");
             } catch (InterruptedException e) {
                 System.out.println("WaxOn Exiting via interrupt");
             }
-            System.out.println("Ending Wax On task");
         }
     }
 
@@ -80,10 +80,10 @@ public class Wax {
                     TimeUnit.MILLISECONDS.sleep(100);
                     car.buffed();
                 }
+                System.out.println("Ending Buffer On task");
             } catch (InterruptedException e) {
                 System.out.println("BufferOn Exiting via interrupt");
             }
-            System.out.println("Ending Buffer On task");
         }
     }
 
@@ -92,7 +92,7 @@ public class Wax {
         ExecutorService exec = Executors.newCachedThreadPool();
         exec.execute(new WaxOn(car));
         exec.execute(new BufferOn(car));
-        TimeUnit.SECONDS.sleep(2); // Run for a while...
+        TimeUnit.MILLISECONDS.sleep(2000); // Run for a while...
         exec.shutdownNow(); // Interrupt all tasks
     }
 }
