@@ -1,7 +1,10 @@
 package com.wangy.review.concurrency.component;
 
+
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Scanner;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -21,17 +24,15 @@ public class SearchKeyword {
 
     public static void main(String[] args) throws InterruptedException {
         try (Scanner in = new Scanner(System.in)) {
-            System.out.print("Enter base directory (e.g. src): ");
-            String directory = in.nextLine();
+            String directory = "src";
             System.out.print("Enter keyword (e.g. volatile): ");
             String keyword = in.nextLine();
 
 
-            Thread r = new Thread( () -> {
+            Thread r = new Thread(() -> {
                 try {
                     enumerate(new File(directory));
                     queue.put(DUMMY);
-
                 } catch (InterruptedException e) {
                     // ignore
                 }
@@ -40,7 +41,7 @@ public class SearchKeyword {
             TimeUnit.SECONDS.sleep(1);
 
             // r线程肯定是阻塞的，并被take()方法唤醒
-            System.out.println(r.getState() == Thread.State.WAITING);
+            System.out.println(r.getState());
 
             for (int i = 1; i <= SEARCH_THREADS; i++) {
                 Runnable searcher = () -> {
@@ -55,8 +56,9 @@ public class SearchKeyword {
                             } else {
                                 search(file, keyword);
                             }
+//                            Thread.yield();
                         }
-                    } catch (IOException | InterruptedException e) {
+                    } catch (Exception e) {
                         // ignore
                     }
                 };
@@ -94,7 +96,7 @@ public class SearchKeyword {
                 lineNumber++;
                 String line = in.nextLine();
                 if (line.contains(keyword)) {
-                    System.out.printf("%s:%d:%s%n", file.getPath(), lineNumber, line);
+                    System.out.printf("[%s] %s:%d:%s%n",Thread.currentThread().getName(), file.getPath(), lineNumber, line);
                 }
             }
         }

@@ -108,7 +108,7 @@ public class SynchronizedViewTest {
                 // 这里获取到的值一定是任务执行完毕之后的最新值
                 // 如果任务的操作不是同步的，那么此循环一定会break
                 System.out.println(list.get(0) + ": " + cal_count + ", 第" + count + "次出现讹误");
-                break;
+                System.exit(1);
             }
         }
     }
