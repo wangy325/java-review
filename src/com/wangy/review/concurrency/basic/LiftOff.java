@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
  * @version 1.0
  * @date 2020/5/10 / 13:34
  */
-class LiftOff implements Runnable {
+public class LiftOff implements Runnable {
     private static int taskCount = 0;
     protected int countDown = 10;
     private final int id = taskCount++;
@@ -28,7 +28,7 @@ class LiftOff implements Runnable {
 //        Thread.currentThread().interrupt();
         while (countDown-- > 0) {
             try {
-                System.out.print(status());
+                System.out.println(status());
                 Thread.yield();
 //                TimeUnit.NANOSECONDS.sleep(1);
             } catch (Exception e) {

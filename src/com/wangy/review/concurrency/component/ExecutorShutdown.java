@@ -1,9 +1,9 @@
 package com.wangy.review.concurrency.component;
 
+import lombok.SneakyThrows;
+
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * 如何关闭线程池<br>
@@ -43,17 +43,24 @@ public class ExecutorShutdown {
     ThreadPoolExecutor service = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
 
 
+    @SneakyThrows
     public static void main(String[] args) {
         ExecutorShutdown es = new ExecutorShutdown();
 //        es.shutdown();
 //        es.shutdownNow();
-        es.awaitTermination();
+//        es.awaitTermination();
+        Future<Double> submit = es.service.submit(new Cal());
+        es.service.shutdownNow();
+        if (submit.isDone()) {
+            System.out.println(submit.get());
+        }
+        System.out.println(submit.get());
     }
 
     /**
      * <p>shutdown: 在线程池队列中的提交的任务会执行，无法提交新的任务。</br>
      * 注意调用这个方法，线程池不会等待（wait）在执行的任务执行完成（complete execution），可以使用awaitTermination实现这个目的。<br>
-     * 需要注意的是，在执行的任务因为是异步线程执行的，<b>任务还是会继续执行</b>，只是说线程池不会阻塞等待任务执行完成</p>
+     * 需要注意的是，在执行的任务因为是异步线程执行的，<b>任务还是会继续执行</b>
      */
     void shutdown() {
         service.execute(new ComplexTask());
@@ -149,4 +156,15 @@ public class ExecutorShutdown {
     }
 
 
+    static class Cal implements Callable<Double> {
+
+        @Override
+        public Double call() throws Exception {
+            double d = Math.PI;
+            for (int i = 0; i < 3000000; i++) {
+                d = d + Math.PI / Math.E;
+            }
+            return d;
+        }
+    }
 }
