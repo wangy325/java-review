@@ -3,14 +3,15 @@ package com.wangy.review.concurrency.component;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.Queue;
 import java.util.Scanner;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
+ * 阻塞队列使用示例1，查找关键字
+ *
  * @author Cay Horstmann
  * @version 1.02 2015-06-21
  * @date 2020/10/26 / 16:41
@@ -20,49 +21,66 @@ public class SearchKeyword {
     private static final int FILE_QUEUE_SIZE = 10;
     private static final int SEARCH_THREADS = 100;
     private static final File DUMMY = new File("");
-    private static BlockingQueue<File> queue = new ArrayBlockingQueue<>(FILE_QUEUE_SIZE);
+    private final BlockingQueue<File> queue = new ArrayBlockingQueue<>(FILE_QUEUE_SIZE);
+    private final static String DIR = "src";
+    private String keyword;
+    volatile boolean done = false;
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
+        SearchKeyword sk = new SearchKeyword();
+        sk.test();
+    }
+
+    void test() {
+        // 带资源的try块
         try (Scanner in = new Scanner(System.in)) {
-            String directory = "src";
             System.out.print("Enter keyword (e.g. volatile): ");
-            String keyword = in.nextLine();
+            keyword = in.nextLine();
 
+            Producer p = new Producer();
+            Consumer c = new Consumer();
 
-            Thread r = new Thread(() -> {
-                try {
-                    enumerate(new File(directory));
-                    queue.put(DUMMY);
-                } catch (InterruptedException e) {
-                    // ignore
-                }
-            });
-            r.start();
-            TimeUnit.SECONDS.sleep(1);
+            ExecutorService pool = Executors.newCachedThreadPool();
 
-            // r线程肯定是阻塞的，并被take()方法唤醒
-            System.out.println(r.getState());
+            pool.execute(p);
 
             for (int i = 1; i <= SEARCH_THREADS; i++) {
-                Runnable searcher = () -> {
-                    try {
-                        boolean done = false;
-                        while (!done) {
-                            File file = queue.take();
-                            if (file == DUMMY) {
-                                // 保证所有线程关闭
-                                queue.put(file);
-                                done = true;
-                            } else {
-                                search(file, keyword);
-                            }
-//                            Thread.yield();
-                        }
-                    } catch (Exception e) {
-                        // ignore
+                // run consumer
+                pool.execute(c);
+            }
+            pool.shutdown();
+        }
+    }
+
+    class Producer implements Runnable {
+
+        @Override
+        public void run() {
+            try {
+                enumerate(new File(DIR));
+                queue.put(DUMMY);
+            } catch (InterruptedException e) {
+                // ignore
+            }
+        }
+    }
+
+    class Consumer implements Runnable {
+
+        @Override
+        public void run() {
+            try {
+                while (!done) {
+                    File file = queue.take();
+                    if (file == DUMMY) {
+                        done = true;
+                    } else {
+                        search(file, keyword);
                     }
-                };
-                new Thread(searcher).start();
+//                  Thread.yield();
+                }
+            } catch (Exception e) {
+                // ignore
             }
         }
     }
@@ -72,7 +90,7 @@ public class SearchKeyword {
      *
      * @param directory the directory in which to start
      */
-    public static void enumerate(File directory) throws InterruptedException {
+    public void enumerate(File directory) throws InterruptedException {
         File[] files = directory.listFiles();
         for (File file : files) {
             if (file.isDirectory()) {
@@ -89,14 +107,14 @@ public class SearchKeyword {
      * @param file    the file to search
      * @param keyword the keyword to search for
      */
-    public static void search(File file, String keyword) throws IOException {
+    public void search(File file, String keyword) throws IOException {
         try (Scanner in = new Scanner(file, "UTF-8")) {
             int lineNumber = 0;
             while (in.hasNextLine()) {
                 lineNumber++;
                 String line = in.nextLine();
                 if (line.contains(keyword)) {
-                    System.out.printf("[%s] %s:%d:%s%n",Thread.currentThread().getName(), file.getPath(), lineNumber, line);
+                    System.out.printf("[%s] %s:%d:%s%n", Thread.currentThread().getName(), file.getPath(), lineNumber, line);
                 }
             }
         }
