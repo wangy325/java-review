@@ -24,14 +24,14 @@ public class SearchKeyword {
     private final BlockingQueue<File> queue = new ArrayBlockingQueue<>(FILE_QUEUE_SIZE);
     private final static String DIR = "src";
     private String keyword;
-    volatile boolean done = false;
+    private volatile boolean done = false;
 
     public static void main(String[] args) {
         SearchKeyword sk = new SearchKeyword();
-        sk.test();
+        sk.find();
     }
 
-    void test() {
+    void find() {
         // 带资源的try块
         try (Scanner in = new Scanner(System.in)) {
             System.out.print("Enter keyword (e.g. volatile): ");

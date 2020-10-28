@@ -62,7 +62,8 @@ public class ToastFactory {
         public void run() {
             try {
                 while (!Thread.interrupted()) {
-                    TimeUnit.MILLISECONDS.sleep(100);
+                    // 这句休眠是保证阻塞链的根本
+                    TimeUnit.NANOSECONDS.sleep(1);
                     // Make toast
                     Toast t = new Toast(count++);
                     System.out.println(t);
@@ -170,7 +171,7 @@ public class ToastFactory {
         exec.execute(this.new Eater(finishQueue));
 
         while (true) {
-            if (count > 4) {
+            if (count > 40) {
                 break;
             }
         }
@@ -183,4 +184,25 @@ public class ToastFactory {
         tf.test();
     }
 
-}
+}/*
+Toast 0: DRY
+Toast 0: BUTTERED
+Chomp! Toast 0: BUTTERED
+Toast 1: DRY
+Toast 1: JAMMED
+Chomp! Toast 1: JAMMED
+Toast 2: DRY
+Toast 2: BUTTERED
+Chomp! Toast 2: BUTTERED
+Toast 3: DRY
+Toast 3: JAMMED
+Chomp! Toast 3: JAMMED
+Toast 4: DRY
+Toast 4: BUTTERED
+Chomp! Toast 4: BUTTERED
+toast count: 5
+Eater interrupted
+Jammer interrupted
+Butterer interrupted
+Toaster interrupted
+ *///:~
