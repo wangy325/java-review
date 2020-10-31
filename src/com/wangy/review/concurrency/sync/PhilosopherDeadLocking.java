@@ -1,15 +1,17 @@
 package com.wangy.review.concurrency.sync;
 
-import java.io.IOException;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 哲学家吃饭都成问题
- *
- * 循环等待造成的死锁问题
+ * 哲学家吃饭因循环等待造成的死锁问题
+ * <p>
+ * 调节哲学家思考参数<code>ponderFactor</code>的时间，可以更快的令死锁发生。当哲学家不思考时，死锁将很快发生，反之，如果哲学家思考的时间够长，
+ * 那么死锁可能永远不会发生
+ * <p>
+ * 死锁是并发编程中存在的潜在风险
  *
  * @author wangy
  * @version 1.0
