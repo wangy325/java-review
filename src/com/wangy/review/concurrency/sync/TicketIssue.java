@@ -12,6 +12,8 @@ import java.util.concurrent.*;
  *
  * 在任务上使用同步
  *
+ * 现有逻辑下，在抢票任务过程中使用不带参数的<code>{@link Object#wait()}</code>方法可能存在的死锁风险
+ *
  * @author wangy
  * @version 1.0
  * @date 2020/5/14 / 16:55
@@ -92,11 +94,12 @@ public class TicketIssue {
 //                        System.out.println(Thread.currentThread().getName() + " 抢到票, 余票数: " + tick.getTickCount());
                         try {
                             // 给其他线程机会
-                            tick.wait(10);
+                            tick.wait();
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
                     } else {
+                        tick.notifyAll();
                         if (!tick.isTickSupply) break;
                     }
                 }
@@ -147,7 +150,14 @@ public class TicketIssue {
     public static void main(String[] args) throws Exception {
 
         TicketIssue ti = new TicketIssue();
-        ti.singleSupply(10000);
-        ti.multiPurchase(50);
+        int count = 10 ,  threadHold = 10;
+        if (args.length > 1){
+            count = Integer.parseInt(args[0]);
+        }
+        if (args.length > 2){
+            threadHold = Integer.parseInt(args[1]);
+        }
+        ti.singleSupply(count);
+        ti.multiPurchase(threadHold);
     }
 }
