@@ -62,14 +62,26 @@ public class TestThreadPoolExecutor {
 
     }
 
-    void cachedPool(){
+    void cachedPool() {
         ThreadPoolExecutor service = (ThreadPoolExecutor) Executors.newCachedThreadPool();
 
-        // service 5秒之后即关闭
-        service.setKeepAliveTime(5,TimeUnit.SECONDS);
-        service.submit(()->{
+        service.setKeepAliveTime(5, TimeUnit.SECONDS);
+        service.submit(() -> {
             System.out.println("task done");
         });
+        while (true) {
+            if (Thread.activeCount() > 2) {
+                continue;
+            }
+            break;
+        }
+        // 线程池5s之后结束运行了，池中没有线程，队列也为空
+        // 但是线程池的状态还是RUNNING
+        System.out.println(service.getPoolSize());
+        System.out.println(service.getActiveCount());
+        System.out.println(service.getQueue().isEmpty());
+        System.out.println(service.isShutdown()); // false
+        System.out.println(service.isTerminated()); // false
 
     }
 
