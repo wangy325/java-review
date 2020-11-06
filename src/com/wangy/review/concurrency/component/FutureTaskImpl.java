@@ -6,6 +6,8 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 
 /**
+ * 展示了{@link FutureTask#run()}和{@link FutureTask#runAndReset()}的区别
+ *
  * @author wangy
  * @version 1.0
  * @date 2020/10/21 / 14:51
@@ -78,7 +80,7 @@ public class FutureTaskImpl<V> extends FutureTask<V> {
      * 先执行{@link #runAndReset()}再执行{@link FutureTask#run()}
      * <p>
      * 任务可以再次执行
-     *
+     * <p>
      * 对于有返回值的任务，执行{@link #runAndReset()}之后调用{@link FutureTask#get()}
      * 方法获取返回值会造成阻塞
      */

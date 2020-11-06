@@ -6,6 +6,8 @@ import lombok.SneakyThrows;
 import java.util.concurrent.*;
 
 /**
+ * 3种不同阻塞队列的表现
+ *
  * @author wangy
  * @version 1.0
  * @date 2020/10/25 / 23:46
