@@ -19,12 +19,12 @@ import java.util.concurrent.Executors;
 public class SearchKeyword {
 
     private static final int FILE_QUEUE_SIZE = 10;
-    private static final int SEARCH_THREADS = 100;
-    private static final File DUMMY = new File("");
-    private final BlockingQueue<File> queue = new ArrayBlockingQueue<>(FILE_QUEUE_SIZE);
+    protected static final int SEARCH_THREADS = 100;
+    protected static final File DUMMY = new File("");
+    protected final BlockingQueue<File> queue = new ArrayBlockingQueue<>(FILE_QUEUE_SIZE);
     private final static String DIR = "src";
-    private String keyword;
-    private volatile boolean done = false;
+    protected String keyword;
+    protected volatile boolean done = false;
 
     public static void main(String[] args) {
         SearchKeyword sk = new SearchKeyword();

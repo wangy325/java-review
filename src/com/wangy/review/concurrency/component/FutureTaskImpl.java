@@ -2,11 +2,12 @@ package com.wangy.review.concurrency.component;
 
 import lombok.SneakyThrows;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.FutureTask;
+import java.util.concurrent.*;
 
 /**
  * 展示了{@link FutureTask#run()}和{@link FutureTask#runAndReset()}的区别
+ * <p>
+ * 展示了cancel方法取消任务是通过中断任务实现的
  *
  * @author wangy
  * @version 1.0
@@ -46,9 +47,17 @@ public class FutureTaskImpl<V> extends FutureTask<V> {
     }
 
     static class Task implements Runnable {
+
         @Override
         public void run() {
-            // do something
+            System.out.println("task running");
+            for (; ; ) {
+                if (Thread.interrupted()) {
+                    break;
+                }
+            }
+            // Thread is interrupted
+            System.out.println("interrupted by cancel");
         }
     }
 
@@ -62,6 +71,18 @@ public class FutureTaskImpl<V> extends FutureTask<V> {
             }
             return sum;
         }
+    }
+
+    @SneakyThrows
+    void cancel() {
+        ExecutorService pool = Executors.newCachedThreadPool();
+        FutureTask<?> future = (FutureTask<?>) pool.submit(this);
+        // 防止任务没有被执行就被cancel
+        TimeUnit.MILLISECONDS.sleep(1);
+        if (future.cancel(true)) {
+            pool.shutdown();
+        }
+
     }
 
     /**
@@ -102,8 +123,9 @@ public class FutureTaskImpl<V> extends FutureTask<V> {
     public static void main(String[] args) {
         // 构造一个没有返回值的FutureTask
         FutureTaskImpl<?> ft = new FutureTaskImpl<>(new Task(), null);
+        ft.cancel();
         FutureTaskImpl<?> ft2 = new FutureTaskImpl<>(new Task2());
-        ft2.runAfterReset();
-//        ft.resetAfterRun();
+//        ft2.runAfterReset();
+//        ft2.resetAfterRun();
     }
 }
