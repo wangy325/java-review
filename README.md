@@ -1,7 +1,6 @@
 
-review the past helps one to understand the present
-温故而知新
+review the past helps one to understand the present.
 
-此repo是Java基础知识的总结
+this repo contains all about java things.
 
-此repo服务于[个人博客](https://wangy325.github.io/endlessriver/)中相关Java基础知识的文章
+all code-demo are illustrated in my blog [endlessriver](https://wangy325.top).
