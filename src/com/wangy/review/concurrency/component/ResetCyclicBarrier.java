@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 其作用是重置屏障，这一操作对<b>正在屏障处等待</b>的线程有不可逆的影响，它们直接抛出{@link BrokenBarrierException}
  * <p>
  * 一旦<code>reset()</code>，就意味着任务没有在barrier处调用{@link CyclicBarrier#await()}，
- * 那么就意味着<code>CyclicBarrier.barrierCommand</code>无法执行了，任务无法全部到达屏障，同时还有可能造成阻塞
+ * 那么<code>CyclicBarrier.barrierCommand</code>无法执行了，任务无法全部到达屏障，同时还有可能造成阻塞
  * <p>
  * 本例是一个错误的示范，永远不要在任务内部调用{@link CyclicBarrier#reset()}方法！
  * <p>
@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @date 2020/11/17 / 17:04
  */
 public class ResetCyclicBarrier {
-    static void reSetBarrierIf(int parties) {
+    static void reSetBarrierIf(int parties, int bound) {
         TaskMayFail[] tasks = new TaskMayFail[parties];
         ThreadPoolExecutor exec = (ThreadPoolExecutor) Executors.newCachedThreadPool();
         exec.setKeepAliveTime(0, TimeUnit.SECONDS);
@@ -45,7 +45,7 @@ public class ResetCyclicBarrier {
         });
 
         for (int i = 0; i < parties; i++) {
-            TaskMayFail taskMayFail = new TaskMayFail(c2, ai);
+            TaskMayFail taskMayFail = new TaskMayFail(c2, ai, bound);
             tasks[i] = taskMayFail;
             exec.execute(taskMayFail);
         }
@@ -56,18 +56,20 @@ public class ResetCyclicBarrier {
         static int count = 1;
         final CyclicBarrier cb;
         final AtomicInteger reSetCount;
+        final int bound;
         final int id = count++;
         int runtime = 0;
 
 
-        public TaskMayFail(CyclicBarrier cb, AtomicInteger reSetCount) {
+        public TaskMayFail(CyclicBarrier cb, AtomicInteger reSetCount, int bound) {
             this.cb = cb;
             this.reSetCount = reSetCount;
+            this.bound = bound;
         }
 
         @Override
         public String toString() {
-            return "TaskMayFail-" + id;
+            return "[TaskMayFail-" + id + "-runtime-" + runtime + "]";
         }
 
         @Override
@@ -75,7 +77,7 @@ public class ResetCyclicBarrier {
             try {
                 while (!Thread.currentThread().isInterrupted()) {
                     if (rand.nextBoolean()) {
-                        if (rand.nextInt(3) < 1) {
+                        if (rand.nextInt(bound) == 0) {
                             throw new ArithmeticException();
                         }
                     }
@@ -90,21 +92,25 @@ public class ResetCyclicBarrier {
                 }
                 // reset barrier
                 cb.reset();
-                System.out.println(Thread.currentThread() + " reset " + cb);
+                System.out.printf("%s-%s reset %s%n",
+                    Thread.currentThread().getName(),
+                    this,
+                    cb);
             } catch (InterruptedException | BrokenBarrierException ae) {
                 reSetCount.incrementAndGet();
                 // once barrier reset, other parties wait on barrier
                 // will throw BrokenBarrierException
-                System.out.println(Thread.currentThread() + " return by broken barrier.");
+                System.out.printf("%s-%s return by broken barrier.%n",
+                    Thread.currentThread().getName(),
+                    this);
             } finally {
                 // call shutdown hook method
                 Thread.currentThread().interrupt();
-                cb.reset();
             }
         }
 
         public static void main(String[] args) {
-            reSetBarrierIf(13);
+            reSetBarrierIf(13, 100);
         }
     }
 }
