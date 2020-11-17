@@ -23,7 +23,7 @@ public class HorseRace {
             barrier = b;
         }
 
-        public synchronized int getStrides() {
+        public int getStrides() {
             return strides;
         }
 
@@ -31,9 +31,7 @@ public class HorseRace {
         public void run() {
             try {
                 while (!Thread.interrupted()) {
-                    synchronized (this) {
-                        strides += rand.nextInt(3); // Produces 0, 1 or 2
-                    }
+                    strides += rand.nextInt(3); // Produces 0, 1 or 2
                     barrier.await();
                 }
             } catch (InterruptedException e) {
@@ -60,35 +58,32 @@ public class HorseRace {
     }
 
     static final int FINISH_LINE = 20;
-    private List<Horse> horses = new ArrayList<Horse>();
-    private ExecutorService exec =
-        Executors.newCachedThreadPool();
+    private List<Horse> horses = new ArrayList<>();
+    private ExecutorService exec = Executors.newCachedThreadPool();
     private CyclicBarrier barrier;
 
+    /** 这是一构造器 */
     public HorseRace(int nHorses, final int pause) {
-        barrier = new CyclicBarrier(nHorses, new Runnable() {
-            @Override
-            public void run() {
-                StringBuilder s = new StringBuilder();
-                for (int i = 0; i < FINISH_LINE; i++) {
-                    s.append("="); // The fence on the racetrack
+        barrier = new CyclicBarrier(nHorses, () -> {
+            StringBuilder s = new StringBuilder();
+            for (int i = 0; i < FINISH_LINE; i++) {
+                s.append("="); // The fence on the racetrack
+            }
+            System.out.println(s);
+            for (Horse horse : horses) {
+                System.out.println(horse.tracks());
+            }
+            for (Horse horse : horses) {
+                if (horse.getStrides() >= FINISH_LINE) {
+                    System.out.println(horse + "won!");
+                    exec.shutdownNow();
+                    return;
                 }
-                System.out.println(s);
-                for (Horse horse : horses) {
-                    System.out.println(horse.tracks());
-                }
-                for (Horse horse : horses) {
-                    if (horse.getStrides() >= FINISH_LINE) {
-                        System.out.println(horse + "won!");
-                        exec.shutdownNow();
-                        return;
-                    }
-                }
-                try {
-                    TimeUnit.MILLISECONDS.sleep(pause);
-                } catch (InterruptedException e) {
-                    System.out.println("barrier-action sleep interrupted");
-                }
+            }
+            try {
+                TimeUnit.MILLISECONDS.sleep(pause);
+            } catch (InterruptedException e) {
+                System.out.println("barrier-action sleep interrupted");
             }
         });
         for (int i = 0; i < nHorses; i++) {
@@ -111,5 +106,4 @@ public class HorseRace {
         }
         new HorseRace(nHorses, pause);
     }
-    
 }

@@ -1,6 +1,9 @@
 package com.wangy.review.concurrency.component;
 
+import java.util.Random;
 import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * "屏障"开启后，所有线程均可运行，但是无法保证线程的执行顺序
@@ -14,13 +17,19 @@ import java.util.concurrent.CyclicBarrier;
 public class TestCyclicBarrier {
 
     private static StringBuffer sb = new StringBuffer();
-    static CyclicBarrier c = new CyclicBarrier(2, () -> sb.append(3));
+    /** CyclicBarrier的构造器任务总是会先执行完毕 */
+    static CyclicBarrier c1 = new CyclicBarrier(2, () -> {
+        sb.append(3);
+    });
+
+
     private static final int ASSERT_VALUE = 312;
 
-    static int run() {
+    /** parties 和 barrierAction的执行顺序 */
+    private static int runSeq() {
         Thread t = new Thread(() -> {
             try {
-                c.await();
+                c1.await();
             } catch (Exception e) {
                 // ignore;
             }
@@ -28,7 +37,7 @@ public class TestCyclicBarrier {
         });
         t.start();
         try {
-            c.await();
+            c1.await();
             sb.append(2);
             t.join();
         } catch (Exception e) {
@@ -37,14 +46,20 @@ public class TestCyclicBarrier {
         return Integer.parseInt(sb.toString()) | (sb.delete(0, sb.length())).length();
     }
 
-    public static void main(String[] args) {
+    static void alwaysReturn() {
         for (; ; ) {
             int r;
-            if ((r = run()) != ASSERT_VALUE) {
+            if ((r = runSeq()) != ASSERT_VALUE) {
                 // should be 321
                 System.out.println(r);
                 return;
             }
         }
+    }
+
+
+    public static void main(String[] args) {
+
+        alwaysReturn();
     }
 }
