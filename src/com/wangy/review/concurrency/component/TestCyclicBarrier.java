@@ -1,9 +1,6 @@
 package com.wangy.review.concurrency.component;
 
-import java.util.Random;
 import java.util.concurrent.CyclicBarrier;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * "屏障"开启后，所有线程均可运行，但是无法保证线程的执行顺序
