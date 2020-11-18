@@ -2,7 +2,10 @@ package com.wangy.review.concurrency.component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author wangy
@@ -63,7 +66,7 @@ public class SemaphoreDemo {
         }
     }
 
-    private static class Fat {
+    public static class Fat {
         private volatile double d; // Prevent optimization
         private static int counter = 0;
         private final int id = counter++;
