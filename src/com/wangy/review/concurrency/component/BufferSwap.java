@@ -4,8 +4,12 @@ import com.wangy.helper.util.BasicGenerator;
 import com.wangy.helper.util.Fat;
 import com.wangy.helper.util.Generator;
 
+import java.util.ArrayDeque;
 import java.util.Queue;
-import java.util.concurrent.*;
+import java.util.concurrent.Exchanger;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -49,16 +53,18 @@ public class BufferSwap {
 
         private DataBuffer<T> db;
         private final Exchanger<DataBuffer<T>> ex;
+        private final int ecLimit;
 
-        public EmptyTask(DataBuffer<T> db, Exchanger<DataBuffer<T>> ex) {
+        public EmptyTask(DataBuffer<T> db, Exchanger<DataBuffer<T>> ex, int limit) {
             this.db = db;
             this.ex = ex;
+            this.ecLimit = limit;
         }
 
         @Override
         public void run() {
             try {
-                while (ec.intValue() < SIZE) {
+                while (ec.intValue() < ecLimit) {
                     if (db.isEmpty()) {
                         db = ex.exchange(db);
                         ec.incrementAndGet();
@@ -72,43 +78,52 @@ public class BufferSwap {
         }
     }
 
-    private AtomicInteger ec = new AtomicInteger();
-    private final int SIZE = 10;
+    /** 交换缓存的次数，用来限制程序的运行 */
+    private final AtomicInteger ec = new AtomicInteger();
 
-    void test() throws InterruptedException {
+    /**
+     * @param size  the buffer size
+     * @param limit the exchange time limit
+     */
+    void test(int size, int limit) {
         Exchanger<DataBuffer<Fat>> xh = new Exchanger<>();
         Generator<Fat> generator = BasicGenerator.create(Fat.class);
-
-        DataBuffer<Fat> fullBuffer = new DataBuffer<>(new ArrayBlockingQueue<>(SIZE), generator,SIZE,false);
-        DataBuffer<Fat> emptyBuffer = new DataBuffer<>(new ArrayBlockingQueue<>(SIZE), null, SIZE,true);
+        // ignore class check
+        // can not solve the issue actually...
+        DataBuffer<Fat> fullBuffer, emptyBuffer;
+        try {
+            fullBuffer = new DataBuffer(ArrayDeque.class, size, generator);
+            emptyBuffer = new DataBuffer(ArrayDeque.class, size);
+        } catch (Exception e) {
+            System.out.println("initialization failure");
+            return;
+        }
         ExecutorService pool = Executors.newCachedThreadPool();
-
         Future<?> t1 = pool.submit(this.new FillTask<>(fullBuffer, generator, xh));
-        Future<?> done = pool.submit(this.new EmptyTask<>(emptyBuffer, xh));
+        Future<?> done = pool.submit(this.new EmptyTask<>(emptyBuffer, xh, limit));
         for (; ; ) {
             if (done.isDone()) {
                 t1.cancel(true);
                 break;
             }
         }
-        System.out.println(ec.intValue());
-        System.out.println("++++++++++++++++++");
-        Queue<Fat> buffer = fullBuffer.getBuffer();
-        for (Fat fat : buffer) {
-            System.out.println(fat);
-        }
-
-        System.out.println("++++++++++++++++++");
-        Queue<Fat> buffer1 = emptyBuffer.getBuffer();
-        for (Fat fat : buffer1) {
-            System.out.println(fat);
-        }
         pool.shutdown();
+        Queue<Fat> full = fullBuffer.getBuffer();
+        System.out.print("fullTask's buffer: ");
+        for (Fat fat : full) {
+            System.out.printf("%s\t", fat);
+        }
+        System.out.println();
+        System.out.println("++++++++++++++++++++++++++++++++");
+        Queue<Fat> empty = emptyBuffer.getBuffer();
+        System.out.print("emptyTask's buffer: ");
+        for (Fat fat : empty) {
+            System.out.printf("%s\t", fat);
+        }
     }
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
         BufferSwap bs = new BufferSwap();
-        bs.test();
-
+        bs.test(10, 100);
     }
 }

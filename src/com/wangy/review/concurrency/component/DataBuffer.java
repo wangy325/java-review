@@ -3,56 +3,47 @@ package com.wangy.review.concurrency.component;
 import com.wangy.helper.util.Generator;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Parameter;
-import java.util.Arrays;
-import java.util.List;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Queue;
-import java.util.concurrent.ArrayBlockingQueue;
 
 /**
  * @author wangy
  * @version 1.0
  * @date 2020/11/19 / 17:53
  */
+@SuppressWarnings("all")
 public class DataBuffer<T> {
 
-    private final Generator<T> gen;
     private Queue<T> buffer;
-    private  final int size;
-    private boolean empty;
-    private final List<Class<?>> CLASSES = Arrays.asList(ArrayBlockingQueue.class.getClasses());
+    /** 利用size构造一个有界队列 */
+    private final int size;
 
+    public DataBuffer(Class<? extends Queue<T>> cls, int size) throws Exception {
+        this(cls, size, null);
+    }
 
-    public DataBuffer(Queue<T> buffer, Generator<T> gen, int size, boolean empty) {
-        if (buffer == null) throw new NullPointerException();
-        /* if (!CLASSES.contains(cls)) throw new ClassCastException();*/
-        if (size < 0 ) throw new IllegalArgumentException();
-
-        /*try {
-            Constructor<T> constructor = cls.getConstructor(int.class);
-            constructor.setAccessible(true);
-            this.buffer = (Queue<T>) constructor.newInstance(size);
-        }catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }*/
-        this.buffer = buffer;
+    public DataBuffer(Class<? extends Queue<T>> cls, int size, Generator<T> gen) throws Exception {
+        if (cls == null) throw new NullPointerException();
+        // 检查cls的类型，如果不是队列，则抛出异常
+        if (!Queue.class.isAssignableFrom(cls)) throw new ClassCastException();
+        if (size < 0) throw new IllegalArgumentException();
         this.size = size;
-        this.gen = gen;
-        if (gen != null && !empty) {
+        try {
+            Constructor<? extends Queue<T>> c = cls.getConstructor(int.class);
+            c.setAccessible(true);
+            this.buffer = c.newInstance(size);
+        } catch (NoSuchMethodException | SecurityException | InvocationTargetException e) {
+            this.buffer = cls.newInstance();
+        }
+
+        if (gen != null) {
             for (int i = 0; i < size; i++)
                 buffer.offer(gen.next());
         }
     }
 
-
     synchronized boolean isFull() {
-        return buffer.size() == size;
+        return buffer.size() >= size;
     }
 
     synchronized boolean isEmpty() {
