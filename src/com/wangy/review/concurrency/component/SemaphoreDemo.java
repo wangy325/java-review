@@ -1,5 +1,7 @@
 package com.wangy.review.concurrency.component;
 
+import com.wangy.helper.util.Fat;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -63,24 +65,6 @@ public class SemaphoreDemo {
         @Override
         public String toString() {
             return "CheckoutTask-" + id + " ";
-        }
-    }
-
-    public static class Fat {
-        private volatile double d; // Prevent optimization
-        private static int counter = 0;
-        private final int id = counter++;
-
-        public Fat() {
-            // Expensive, interruptible operation:
-            for (int i = 1; i < 10000; i++) {
-                d += (Math.PI + Math.E) / (double) i;
-            }
-        }
-
-        @Override
-        public String toString() {
-            return "Fat-" + id;
         }
     }
 

@@ -10,14 +10,14 @@ package com.wangy.review.finalwords;
 
 public class Constant {
     public static void main(String[] args) {
-        System.out.println("NUM = " + T.NUM);
-        System.out.println("b = " + T.b);
-        System.out.println("WORDS = " + T.WORDS);
-        System.out.println("LEN = " + T.LEN);
+        System.out.println("NUM = " + ConstantT.NUM);
+        System.out.println("b = " + ConstantT.b);
+        System.out.println("WORDS = " + ConstantT.WORDS);
+        System.out.println("LEN = " + ConstantT.LEN);
     }
 }
 
-class T {
+class ConstantT {
     /**编译时常量*/
     static final int NUM = 10;
     static final String WORDS = "hello";

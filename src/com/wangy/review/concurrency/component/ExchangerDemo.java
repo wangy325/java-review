@@ -1,13 +1,12 @@
 package com.wangy.review.concurrency.component;
 
 import com.wangy.helper.util.BasicGenerator;
+import com.wangy.helper.util.Fat;
 import com.wangy.helper.util.Generator;
 import lombok.SneakyThrows;
 
 import java.util.List;
 import java.util.concurrent.*;
-
-import static com.wangy.review.concurrency.component.SemaphoreDemo.Fat;
 
 /**
  * @author wangy
