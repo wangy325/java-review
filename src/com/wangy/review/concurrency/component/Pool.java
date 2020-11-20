@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.concurrent.Semaphore;
 
 /**
+ * 使用信号量管理"池"对象
+ *
  * @author wangy
  * @version 1.0
  * @date 2020/11/18 / 22:08

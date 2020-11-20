@@ -5,6 +5,7 @@ import com.wangy.helper.util.Fat;
 import com.wangy.helper.util.Generator;
 
 import java.util.ArrayDeque;
+import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.Exchanger;
 import java.util.concurrent.ExecutorService;
@@ -35,16 +36,21 @@ public class BufferSwap {
 
         @Override
         public void run() {
-            try {
-                while (db != null) {
-                    if (db.isFull()) {
+            while (db != null) {
+                if (db.isFull()) {
+                    try {
+                        // may cancel in here with InterruptedException thrown
                         db = ex.exchange(db);
-                    } else {
-                        db.addToBuffer(gen.next());
+                    } catch (InterruptedException e) {
+                        // right to exit here
+                        break;
                     }
+                } else {
+                    // or cancel in here with interrupt status set
+                    if (Thread.currentThread().isInterrupted())
+                        break;
+                    db.addToBuffer(gen.next());
                 }
-            } catch (InterruptedException e) {
-                // right to exit here
             }
         }
     }
@@ -92,14 +98,14 @@ public class BufferSwap {
         // can not solve the issue actually...
         DataBuffer<Fat> fullBuffer, emptyBuffer;
         try {
-            fullBuffer = new DataBuffer(ArrayDeque.class, size, generator);
-            emptyBuffer = new DataBuffer(ArrayDeque.class, size);
+            fullBuffer = new DataBuffer(LinkedList.class, size, generator);
+            emptyBuffer = new DataBuffer(LinkedList.class, size);
         } catch (Exception e) {
             System.out.println("initialization failure");
             return;
         }
         ExecutorService pool = Executors.newCachedThreadPool();
-        Future<?> t1 = pool.submit(this.new FillTask<>(fullBuffer, generator, xh));
+        Future<?> t1 = pool.submit(this.new FillTask(fullBuffer, generator, xh));
         Future<?> done = pool.submit(this.new EmptyTask<>(emptyBuffer, xh, limit));
         for (; ; ) {
             if (done.isDone()) {
@@ -107,19 +113,19 @@ public class BufferSwap {
                 break;
             }
         }
-        pool.shutdown();
         Queue<Fat> full = fullBuffer.getBuffer();
-        System.out.print("fullTask's buffer: ");
+        System.out.print("fillTask's buffer: ");
         for (Fat fat : full) {
             System.out.printf("%s\t", fat);
         }
         System.out.println();
-        System.out.println("++++++++++++++++++++++++++++++++");
         Queue<Fat> empty = emptyBuffer.getBuffer();
         System.out.print("emptyTask's buffer: ");
         for (Fat fat : empty) {
             System.out.printf("%s\t", fat);
         }
+        // shutdown可以放在cancel之后的任意位置
+        pool.shutdown();
     }
 
     public static void main(String[] args) {
