@@ -3,6 +3,7 @@ package com.wangy.helper.util;
 import java.util.Random;
 
 /**
+ *
  * @author wangy
  * @version 1.0
  * @date 2020/11/21 / 21:50
@@ -70,6 +71,7 @@ public class RandomGenerator {
             mod = modulo;
         }
 
+        @Override
         public java.lang.Integer next() {
             return r.nextInt(mod);
         }

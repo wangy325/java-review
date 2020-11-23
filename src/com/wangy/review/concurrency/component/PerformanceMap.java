@@ -7,9 +7,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 /**
  * Rough comparison of thread-safe Map performance.
+ * <p>
+ * {@link ConcurrentHashMap}性能完爆{@link HashMap}，也好于{@link ConcurrentSkipListMap}
  *
  * @author mindview
  * @version 1.0
@@ -34,7 +37,7 @@ public class PerformanceMap {
             }
 
             @Override
-            void putResults() {
+            synchronized void putResults() {
                 readResult += result;
                 readTime += duration;
             }
@@ -50,7 +53,7 @@ public class PerformanceMap {
             }
 
             @Override
-            void putResults() {
+            synchronized void putResults() {
                 writeTime += duration;
             }
         }
@@ -68,7 +71,7 @@ public class PerformanceMap {
         @Override
         Map<Integer, Integer> containerInitializer() {
             return Collections.synchronizedMap(
-                new HashMap<Integer, Integer>(
+                new HashMap<>(
                     MapData.map(
                         new CountingGenerator.Integer(),
                         new CountingGenerator.Integer(),
@@ -83,14 +86,32 @@ public class PerformanceMap {
     class ConcurrentHashMapTest extends MapTest {
         @Override
         Map<Integer, Integer> containerInitializer() {
-            return new ConcurrentHashMap<Integer, Integer>(
+            return new ConcurrentHashMap<>(
                 MapData.map(
                     new CountingGenerator.Integer(),
-                    new CountingGenerator.Integer(), containerSize));
+                    new CountingGenerator.Integer(),
+                    containerSize));
         }
 
         ConcurrentHashMapTest(int nReaders, int nWriters) {
             super("ConcurrentHashMap", nReaders, nWriters);
+        }
+    }
+
+    class ConcurrentSkipListMapTest extends MapTest {
+
+        ConcurrentSkipListMapTest(int nReaders, int nWriters) {
+            super("ConcurrentSkipListMap", nReaders, nWriters);
+        }
+
+        @Override
+        Map<Integer, Integer> containerInitializer() {
+            // elements in ConcurrentSkipListMap must be comparable
+            return new ConcurrentSkipListMap<>(
+                MapData.map(
+                    new CountingGenerator.Integer(),
+                    new CountingGenerator.Integer(),
+                    containerSize));
         }
     }
 
@@ -102,11 +123,14 @@ public class PerformanceMap {
         new ConcurrentHashMapTest(10, 0);
         new ConcurrentHashMapTest(9, 1);
         new ConcurrentHashMapTest(5, 5);
+        new ConcurrentSkipListMapTest(10, 0);
+        new ConcurrentSkipListMapTest(9, 1);
+        new ConcurrentSkipListMapTest(5, 5);
         ConcurrentContainerTester.exec.shutdown();
     }
 
     public static void main(String[] args) {
         PerformanceMap pm = new PerformanceMap();
-        pm.test(new String[]{"1", "1000", "1000"});
+        pm.test(new String[]{"10", "1000", "1000"});
     }
 }

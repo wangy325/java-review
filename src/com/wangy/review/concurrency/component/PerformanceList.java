@@ -32,7 +32,7 @@ public class PerformanceList {
             }
 
             @Override
-            void putResults() {
+            synchronized void putResults() {
                 readResult += result;
                 readTime += duration;
             }
@@ -48,13 +48,14 @@ public class PerformanceList {
             }
 
             @Override
-            void putResults() {
+            synchronized void putResults() {
                 writeTime += duration;
             }
         }
 
         @Override
         void startReadersAndWriters() {
+            // multi-thread read & write
             for (int i = 0; i < nReaders; i++)
                 exec.execute(new Reader());
             for (int i = 0; i < nWriters; i++)
@@ -99,6 +100,6 @@ public class PerformanceList {
     public static void main(String[] args) {
         PerformanceList lp = new PerformanceList();
 
-        lp.test(new String[]{"1", "1000", "1000"});
+        lp.test(new String[]{"10", "1000", "1000"});
     }
 }
