@@ -35,6 +35,20 @@ public class SynchronizedOnStaticDomain {
 
     }
 
+    static class Cal11 implements Runnable {
+        @Override
+        public void run() {
+            synchronized (SynchronizedOnStaticDomain.class) {
+                for (int i = 0; i < 1000; i++) {
+                    count++;
+                }
+                System.out.println(Thread.currentThread() + "finished compute: " + count);
+
+            }
+        }
+
+    }
+
     /** or use this */
     static class Cal2 implements Runnable {
         @Override
@@ -69,7 +83,7 @@ public class SynchronizedOnStaticDomain {
 
         ExecutorService pool = Executors.newCachedThreadPool();
         for (int i = 0; i < 100; i++) {
-            pool.submit(new Cal2());
+            pool.submit(new Cal11());
         }
         pool.shutdown();
         while (Thread.activeCount() > 2) Thread.yield();
