@@ -56,8 +56,7 @@ import java.util.Scanner;
  * 说明<br>
  * 可选方案 (1, 10, 20)
  * <p>
- * <p>
- * 这个代码算法复杂度过高，不符合！
+ * todo: 这个代码算法复杂度过高，不符合！
  *
  * @author wangy
  * @version 1.0

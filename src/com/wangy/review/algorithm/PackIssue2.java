@@ -3,7 +3,7 @@ package com.wangy.review.algorithm;
 import java.util.Scanner;
 
 /**
- * 来源：https://www.nowcoder.com/practice/f9c6f980eeec43ef85be20755ddbeaf4?tpId=37&tags=&title=&diffculty=0&judgeStatus=0&rp=1
+ * 来源：https://www.nowcoder.com/questionTerminal/f9c6f980eeec43ef85be20755ddbeaf4
  * <p>
  * 王强今天很开心，公司发给N元的年终奖。王强决定把年终奖用于购物，他把想买的物品分为两类：主件与附件，附件是从属于某个主件的，
  * 下表就是一些主件与附件的例子：
@@ -65,7 +65,7 @@ import java.util.Scanner;
  * </pre>
  * 输出示例
  * <pre>
- *
+ * 2200
  * </pre>
  *
  * @author wangy
@@ -157,7 +157,6 @@ public class PackIssue2 {
                 }
             }
         }
-
         System.out.println(dp[m][N]);
     }
 
@@ -170,10 +169,6 @@ class Tar {
     boolean isAttach;
     int a1; // index of attachment 1 in Tar[]
     int a2; // index of attachment 2 in Tar[]
-
-    /*public Tar(int v, int p) {
-        new Tar(v, p, false);
-    }*/
 
     public Tar(int p, int w, boolean isAttach) {
         this.v = p;

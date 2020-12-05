@@ -1,9 +1,8 @@
 package com.wangy.review.algorithm;
 
 /**
- * https://www.nowcoder.com/questionTerminal/f9c6f980eeec43ef85be20755ddbeaf4
  * <p>
- * 背包问题：
+ * 动态规划算法之背包问题：
  * <p>
  * 给定n种物品和一背包。物品 i 的重量似乎 wi，其价值为 vi，背包的容量为 c。问应该如何选择装入背包中的物品，
  * 使得装入背包中物品的总价值最大？
@@ -29,7 +28,9 @@ public class PackIssue {
         // 不然计算dp时i = 0需要单独讨论
         int m = gs.length - 1;
 
-        // 最大价值表
+        // 最大价值表是一张N*m的二维表格，表格的每一格数据dp[i][j]表示i件物品放入容量为j的背包中
+        // 所能获取的最大价值，这个最大价值的形成有2个条件：物品i要么放入背包，要么不放入背包
+        // 典型的dp公式
         // dp[i][j] = max{dp[i-1][j], dp[i-1,j-w[i]] + v[i]}
         // N也无需从0开始，没有意义
         int[][] dp = new int[m + 1][N + 1];
