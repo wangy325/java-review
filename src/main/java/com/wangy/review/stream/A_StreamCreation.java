@@ -12,6 +12,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
+ * many ways to create a {@link Stream} in Java api.
+ *
  * @author wangy
  * @version 1.0
  * @date 2021/1/12 / 22:35
@@ -37,6 +39,7 @@ public class A_StreamCreation {
         String contents = new String(Files.readAllBytes(path),
             StandardCharsets.UTF_8);
 
+        // \\PL+
         Stream<String> words = Stream.of(contents.split("\\PL+"));
         show("words", words);
         Stream<String> song = Stream.of("gently", "down", "the", "stream");
