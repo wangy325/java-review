@@ -1,4 +1,6 @@
 out/*
 .idea/*
-
+.mvn/
+.iml
+.DS_Store
 target/*
