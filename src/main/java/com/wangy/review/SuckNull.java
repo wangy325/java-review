@@ -11,6 +11,9 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
+ * {@link java.util.Optional} and {@link com.google.common.base.Optional} offer
+ * useful methods to deal with <b>{@code null}</b> troubles.
+ *
  * @author wangy
  * @date 01.26/0026 14:13
  */
@@ -64,7 +67,7 @@ public class SuckNull {
 
         /*
          *   Stream is much convenient than Optional.
-         *   different to Stream operation, the Optional operation could change the original List
+         *   Different to Stream operation, the Optional operation could change the original List
          */
         Optional<List<Object>> list2 = Optional.ofNullable(someList).map(l -> {
             l.removeIf(Objects::isNull);
@@ -84,11 +87,12 @@ public class SuckNull {
     }
 
     static void setOption() {
-        // remove null element from `someHashSet` by using Optional
+        // Remove null element from `someHashSet` by using Optional,
+        // and the origin `someHashSet` is modified permanently.
         Optional.ofNullable(someHashSet)
                 .filter(s -> s.contains(null))
                 .ifPresent(s -> s.removeIf(o -> !Optional.ofNullable(o).isPresent()))
-                ;
+        ;
         System.out.println(someHashSet);
     }
 
@@ -125,7 +129,7 @@ public class SuckNull {
         mapNullKeyValue.ifPresent(mp -> {
             nullKeyValue[0] = (Value) mp.get(null);
             for (Map.Entry<Object, Object> entry : mp.entrySet()) {
-                if (Objects.isNull(entry.getValue())){
+                if (Objects.isNull(entry.getValue())) {
                     nullValueKey[0] = (Key) entry.getKey();
                 }
             }
@@ -170,7 +174,7 @@ public class SuckNull {
 
         @Override
         public String toString() {
-            return Objects.isNull(this.key) ? null: "Value{" + key.serial + "}";
+            return Objects.isNull(this.key) ? null : "Value{" + key.serial + "}";
         }
     }
 }
