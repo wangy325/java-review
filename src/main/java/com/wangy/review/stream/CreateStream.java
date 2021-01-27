@@ -18,7 +18,7 @@ import java.util.stream.Stream;
  * @version 1.0
  * @date 2021/1/12 / 22:35
  */
-public class A_StreamCreation {
+public class CreateStream {
 
     public static <T> void show(String title, Stream<T> stream) {
         final int SIZE = 10;
@@ -35,7 +35,7 @@ public class A_StreamCreation {
     }
 
     public static void main(String[] args) throws IOException {
-        Path path = Paths.get("./src/com/wangy/helper/resource/alice30.txt");
+        Path path = Paths.get("src/main/resources/txt/alice30.txt");
         String contents = new String(Files.readAllBytes(path),
             StandardCharsets.UTF_8);
 

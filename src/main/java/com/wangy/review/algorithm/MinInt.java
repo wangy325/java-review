@@ -38,8 +38,12 @@ public class MinInt {
 
 
     public static void main(String[] args) throws FileNotFoundException {
-        Scanner in = new Scanner(new FileInputStream(new File(System.getProperty("user.dir") +
-            "/src/com/wangy/review/algorithm/test-input.txt")));
+        // file path: src/main/resources/txt/test-input.txt
+        Scanner in = new Scanner(
+            new FileInputStream(
+                new File("src/main/resources/txt/test-input.txt")
+            )
+        );
 
         String str = in.nextLine();
         in.close();
