@@ -1,7 +1,7 @@
 package com.wangy.review.concurrency.component;
 
-import com.wangy.helper.util.Generated;
-import com.wangy.helper.util.RandomGenerator;
+import com.wangy.common.helper.Generated;
+import com.wangy.common.helper.RandomGenerator;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;

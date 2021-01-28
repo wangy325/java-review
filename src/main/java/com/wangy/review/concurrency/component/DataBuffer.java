@@ -1,6 +1,6 @@
 package com.wangy.review.concurrency.component;
 
-import com.wangy.helper.util.Generator;
+import com.wangy.common.helper.Generator;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;

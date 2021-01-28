@@ -1,13 +1,8 @@
-package com.wangy.review;
+package com.wangy.common.util;
 
 import lombok.EqualsAndHashCode;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.*;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**

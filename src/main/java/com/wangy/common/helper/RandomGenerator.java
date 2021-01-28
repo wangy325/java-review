@@ -1,4 +1,4 @@
-package com.wangy.helper.util;
+package com.wangy.common.helper;
 
 import java.util.Random;
 

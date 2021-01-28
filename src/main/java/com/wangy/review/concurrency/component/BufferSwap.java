@@ -1,10 +1,9 @@
 package com.wangy.review.concurrency.component;
 
-import com.wangy.helper.util.BasicGenerator;
-import com.wangy.helper.util.Fat;
-import com.wangy.helper.util.Generator;
+import com.wangy.common.helper.BasicGenerator;
+import com.wangy.common.helper.Fat;
+import com.wangy.common.helper.Generator;
 
-import java.util.ArrayDeque;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.Exchanger;

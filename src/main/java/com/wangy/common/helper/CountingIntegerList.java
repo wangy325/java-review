@@ -1,6 +1,6 @@
 //: net/mindview/util/CountingIntegerList.java
 // List of any length, containing sample data.
-package com.wangy.helper.util;
+package com.wangy.common.helper;
 
 import java.util.AbstractCollection;
 import java.util.AbstractList;

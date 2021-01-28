@@ -1,6 +1,6 @@
 package com.wangy.review.concurrency.component;
 
-import com.wangy.helper.util.CountingIntegerList;
+import com.wangy.common.helper.CountingIntegerList;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedDeque;

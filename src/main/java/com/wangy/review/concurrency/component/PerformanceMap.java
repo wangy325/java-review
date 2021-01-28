@@ -1,7 +1,7 @@
 package com.wangy.review.concurrency.component;
 
-import com.wangy.helper.util.CountingGenerator;
-import com.wangy.helper.util.MapData;
+import com.wangy.common.helper.CountingGenerator;
+import com.wangy.common.helper.MapData;
 
 import java.util.Collections;
 import java.util.HashMap;

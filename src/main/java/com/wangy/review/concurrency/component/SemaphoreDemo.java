@@ -1,6 +1,6 @@
 package com.wangy.review.concurrency.component;
 
-import com.wangy.helper.util.Fat;
+import com.wangy.common.helper.Fat;
 
 import java.util.ArrayList;
 import java.util.List;
