@@ -98,6 +98,18 @@ public class Intro {
     }
 
     /**
+     *
+     */
+    static Date getStartOfDay(LocalDate localDate){
+        ZonedDateTime zonedDateTime = localDate.atStartOfDay(ZoneId.systemDefault());
+
+        LocalDateTime localDateTime = localDate.atStartOfDay();
+        Instant instant = localDateTime.toInstant(ZoneOffset.of("+8"));
+//        return Date.from(zonedDateTime.toInstant());
+        return Date.from(instant);
+    }
+
+    /**
      * Get yyyy-MM-dd 23:59:59.999, end of the day.<br>
      * By using {@link LocalDateTime#plus(long, TemporalUnit)}
      */
@@ -162,9 +174,10 @@ public class Intro {
     public static void main(String[] args) throws ParseException {
         System.out.println(sdfBuilder(yyyy_MM_dd_HH_mm_ss).format(getStartOfDay()));
         System.out.println(sdfBuilder(yyyy_MM_dd_HH_mm_ss).format(getStartOfDay("2021-02-02")));
+        System.out.println(sdfBuilder(yyyy_MM_dd_HH_mm_ss_SSS).format(getStartOfDay(LocalDate.parse("2021-02-22", dtfBuilder(yyyy_MM_dd)))));
         System.out.println(sdfBuilder(yyyy_MM_dd_HH_mm_ss_SSS).format(getEndOfDay()));
         System.out.println(sdfBuilder(yyyy_MM_dd_HH_mm_ss_SSS).format(getEndOfDay("2020-12-21")));
-        System.out.println(sdfBuilder(yyyy_MM_dd).format(getFirstDayOfMonth("2020-12-31")));
+        System.out.println(sdfBuilder(yyyy_MM_dd).format(getFirstDayOfMonth("2020-12-18")));
         System.out.println(sdfBuilder(yyyy_MM_dd_HH_mm_ss).format(getFirstDayOfYear("2012")));
     }
 }
