@@ -20,7 +20,6 @@ public class NodeList<E> {
       插入头部
       插入尾部
       根据index获取元素
-      根据值获取元素
       根据值删除
       根据index删除
       反转链表元素
@@ -135,7 +134,7 @@ public class NodeList<E> {
     }
 
     /**
-     * 移除指定元素，若元素不在链表中，则不作处理
+     * 移除链表中首次出现的指定元素，若元素不在链表中，则不作处理
      * <p>
      * 平均时间复杂度O(n^2)
      *
@@ -146,14 +145,28 @@ public class NodeList<E> {
         while (p != null) {
             if (p.data.equals(e)) {
                 remove(p);
+                return;
             }
             p = p.next;
         }
     }
 
+    /**
+     * remove element by index.
+     * <p>
+     * 时间复杂度 O(n)
+     *
+     * @param index index of element in linked list, Analogous to the index semantics of an array.
+     */
     void remove(int index) {
         if (index >= size) throw new IndexOutOfBoundsException("index must >= 0 and < " + size);
-        fastRemove(get(index));
+        Node<E> del = head;
+        Node<E> l = head;
+        for (int i = 0; i < index; i++) {
+            l = del;
+            del = del.next;
+        }
+        remove(l, del);
     }
 
     /**
@@ -189,7 +202,7 @@ public class NodeList<E> {
     }
 
     /**
-     * 快速删除元素
+     * 快速移除链表中首次出现的元素
      * <p>
      * 平均时间复杂度O(n)
      *
@@ -201,6 +214,7 @@ public class NodeList<E> {
         while (r != null) {
             if (r.data.equals(e)) {
                 remove(l, r);
+                return;
             }
             l = r;
             r = r.next;
@@ -311,12 +325,11 @@ public class NodeList<E> {
         }
         // 反转slow节点之前的元素
         Node<E> rev = slow;
-        Node<E> h = head;
         reverse(rev);
         System.out.println("++++++ after reverse ++++++");
         printAll();
 
-        // 此head和h不一样！
+        // 此head和h不一样！链表已被部分反转
         Node<E> pre = head;
         try {
             if (b) {
@@ -442,6 +455,8 @@ public class NodeList<E> {
         System.out.println(stringNodeList.isPalindrome());
 
         System.out.println(stringNodeList.get(5));
+        stringNodeList.remove(3);
+        stringNodeList.printAll();
 
     }
 }
