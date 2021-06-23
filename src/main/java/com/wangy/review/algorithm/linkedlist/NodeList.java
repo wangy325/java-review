@@ -28,7 +28,7 @@ public class NodeList<E> {
      */
 
     public NodeList() {
-        this.head = this.tail = node(null);
+        this.head = this.tail = null;
         this.size = 0;
     }
 
@@ -117,6 +117,12 @@ public class NodeList<E> {
         return false;
     }
 
+    /**
+     * 当链表中存在重复元素时，无法准确获取index。 获取的是该元素第一次出现的index。
+     *
+     * @param e element
+     * @return index of first occurrence index of element in single linked list.
+     */
     int getIndex(E e) {
         Node<E> p = head;
         int pos = 0;
@@ -253,6 +259,27 @@ public class NodeList<E> {
     }
 
     /**
+     * 反转head-node节点(不含)之间的元素
+     *
+     * @param node 标记节点
+     */
+    private void reverse(Node<E> node) {
+        if (!contains(node.data)) return;
+        Node<E> h = new Node(null);
+        h.next = node;
+        Node<E> cur = head;
+        Node next;
+        while (!cur.equals(node)) {
+            next = cur.next;
+            cur.next = h.next;
+            h.next = cur;
+
+            cur = next;
+        }
+        head = h.next;
+    }
+
+    /**
      * 判断链表内容是否回文字符串
      * <p>
      * 回文字符串，即字符串从左往右和从右往左读是一样的，如【refer】就是回文字符串
@@ -263,24 +290,54 @@ public class NodeList<E> {
      */
     boolean isPalindrome() {
         if (head == null) return false;
-        Node<E> slow  = head;
+        Node<E> slow = head;
         Node<E> fast = head;
-        while(fast.next.next != null){
-            slow = slow.next;;
+        while (fast.next != null && fast.next.next != null) {
+            slow = slow.next;
             fast = fast.next.next;
         }
-        if (fast.next != null){
-            System.out.println("flag here");
+        // 处理1、2个元素的情形
+        if (slow.equals(fast)) {
+            if (size == 1) {
+                return true;
+            }
+            return head.data.equals(tail.data);
+        }
+        boolean b = false;
+        if (fast.next != null) {
             // 偶数个元素
             slow = slow.next;
+            b = true;
         }
-        Node<E> pre = head;
-        while (slow.next != null){
-            if (slow.data != pre.data) return false;
-            slow = slow.next;
-            pre = pre.next;
-        }
+        // 反转slow节点之前的元素
+        Node<E> rev = slow;
+        Node<E> h = head;
+        reverse(rev);
+        System.out.println("++++++ after reverse ++++++");
+        printAll();
 
+        // 此head和h不一样！
+        Node<E> pre = head;
+        try {
+            if (b) {
+                while (slow != null) {
+                    if (slow.data != pre.data) return false;
+                    slow = slow.next;
+                    pre = pre.next;
+                }
+            } else {
+                while (slow.next != null) {
+                    if (slow.next.data != pre.data) return false;
+                    slow = slow.next;
+                    pre = pre.next;
+                }
+            }
+        } finally {
+            // 还原链表
+            reverse(rev);
+            System.out.println("++++++ after restore ++++++");
+            printAll();
+        }
         return true;
     }
 
@@ -299,7 +356,7 @@ public class NodeList<E> {
     }
 
 
-    class Node<U> {
+    static class Node<U> {
         U data;
         Node<U> next;
 
@@ -325,6 +382,7 @@ public class NodeList<E> {
             result = 31 * result + (next != null ? next.hashCode() : 0);
             return result;
         }
+
     }
 
     public static void main(String[] args) {
@@ -361,14 +419,29 @@ public class NodeList<E> {
         nl.printAll();
 
         System.out.println("++++++ judge palindrome ++++++");
-        String[] s = new String[] {"r","e","f","e","r"};
+        String[] s = new String[]{"r", "e", "f", "f", "e", "r"};
+//        String[] s = new String[]{"r", "e", "f", "f", "e", "p"};
+//        String[] s = new String[]{"r", "e", "f", "e", "r"};
+//        String[] s = new String[]{"r", "e", "f", "e", "p"};
+//        String[] s = new String[]{"r"};
+//        String[] s = new String[]{"r", "s"};
+//        String[] s = new String[]{"r", "r"};
+//        String[] s = new String[]{"r", "s", "r"};
+//        String[] s = new String[]{"r", "s", "t"};
+
         NodeList<String> stringNodeList = new NodeList<>();
         for (String str : s) {
             stringNodeList.insertHead(str);
         }
         stringNodeList.printAll();
+        /*Node<String> p = stringNodeList.head;
+        for (int i = 0; i < stringNodeList.size; i++) {
+            System.out.println(p + " --> " + p.next);
+            p = p.next;
+        }*/
         System.out.println(stringNodeList.isPalindrome());
 
-    }
+        System.out.println(stringNodeList.get(5));
 
+    }
 }
