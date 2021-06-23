@@ -120,7 +120,7 @@ public class NodeList<E> {
      * 当链表中存在重复元素时，无法准确获取index。 获取的是该元素第一次出现的index。
      *
      * @param e element
-     * @return index of first occurrence index of element in single linked list.
+     * @return index of first occurrence of element in single linked list.
      */
     int getIndex(E e) {
         Node<E> p = head;
