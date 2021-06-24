@@ -76,6 +76,7 @@ public class StackByList {
         }
 
         Object removeHead(){
+            if(head == null) throw new ArrayStoreException("Stack Empty!");
             Node h = this.head;
             this.head = this.head.next;
             size--;
