@@ -19,6 +19,10 @@ public class SimpleBrowser {
     }
 
     String back() {
+        if (x.size() == 1) {
+            System.out.print("当前已在最后页面了！");
+            return null;
+        }
         y.push(x.pop());
         String cur = x.pop();
         x.push(cur);
@@ -28,7 +32,8 @@ public class SimpleBrowser {
     String forward() {
         String cur = y.pop();
         if (cur == null) {
-            throw new RuntimeException("当前已在最前页面了");
+            System.out.print("当前已在最前页面了！");
+            return null;
         }
         x.push(cur);
         return cur;
@@ -41,8 +46,16 @@ public class SimpleBrowser {
         System.out.println("visit: " + browser.visit("www.google.com"));
         System.out.println("back: " + browser.back());
         System.out.println("back: " + browser.back());
+        System.out.println("back: " + browser.back());
+        System.out.println("back: " + browser.back());
+        System.out.println("back: " + browser.back());
         System.out.println("forward: " + browser.forward());
         System.out.println("visit: " + browser.visit("www.oracle.com"));
+        System.out.println("back: " + browser.back());
+        System.out.println("forward: " + browser.forward());
+        System.out.println("forward: " + browser.forward());
+        System.out.println("forward: " + browser.forward());
+        System.out.println("back: " + browser.back());
     }
 
     /********************* 栈的基本实现 ********************/
@@ -57,6 +70,10 @@ public class SimpleBrowser {
             this.data = new String[10];
             this.cap = 10;
             this.size = 0;
+        }
+
+        int size() {
+            return size;
         }
 
         void push(String str) {
@@ -77,8 +94,11 @@ public class SimpleBrowser {
 
         // 清空栈
         void clear() {
+            // 让GC处理出栈的元素
             while (size > 0)
                 pop();
+//            size = 0 ;
+
         }
     }
 }
