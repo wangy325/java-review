@@ -81,6 +81,10 @@ public class StackByArray {
         return data[--size];
     }
 
+    Object top(){
+        return data[size -1];
+    }
+
     public static void main(String[] args) {
         StackByArray stack = new StackByArray(3);
         stack.push(1);

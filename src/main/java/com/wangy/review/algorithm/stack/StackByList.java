@@ -28,6 +28,10 @@ public class StackByList {
         return data.removeHead();
     }
 
+    Object top(){
+        return data.getHead();
+    }
+
     // 按出栈顺序打印栈内元素
     void printAll(){
         data.printAll();
