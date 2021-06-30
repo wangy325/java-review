@@ -70,7 +70,7 @@ public class ArrayQueue {
         System.out.print("队列：[");
         if (!isEmpty()) {
             //
-            for (int i = head; i < tail + 1; i++) {
+            for (int i = head; i <=tail; i++) {
                 if (i == tail)
                     System.out.print(data[i]);
                 else
