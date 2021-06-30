@@ -36,7 +36,7 @@ public class ArrayQueueUnbounded {
         return tail == -1 || head == tail + 1;
     }
 
-    // 入队
+    // 入队 平均时间复杂度O(1)
     int enQueue(int e) {
         // full, grow, and reposition
         // 若队列满了，那么增加容量，并且将队列中的元素进行重排
