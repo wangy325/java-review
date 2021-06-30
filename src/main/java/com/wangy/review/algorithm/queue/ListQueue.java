@@ -8,34 +8,57 @@ package com.wangy.review.algorithm.queue;
  * @date 2021/6/28 / 15:09
  */
 public class ListQueue {
-
-    private SingleNodeList data;
     // index
-    private SingleNodeList.Node head;
+    private Node head;
 
-    private int tail;
+    private Node tail;
+
+    private int size;
 
     public ListQueue() {
-        this.data = new SingleNodeList();
     }
 
     int size() {
-        return data.size;
+        return size;
     }
 
     int enQueue(int e) {
-        data.addTail(e);
+        Node node = new Node(e);
+        // empty
+        if (size == 0) {
+            head = tail = node;
+        } else {
+            tail.next = node;
+            tail = node;
+        }
+        ++size;
         return e;
     }
 
     int deQueue() {
-        return data.removeHead();
+        if (size == 0) throw new RuntimeException("xx为空");
+        int e = head.n_data;
+        head = head.next;
+        // head = null, 链表元素全部弹出
+        if (head == null) tail = null;
+        --size;
+        return e;
     }
 
     // O(n)
     void printAll() {
         // 打印链表
-        data.printAll();
+        System.out.print("[");
+        Node pos = head;
+        for (int i = 0; i < size; i++) {
+            if (i == size - 1) {
+                System.out.print(pos.n_data);
+            } else {
+                System.out.print(pos.n_data + ", ");
+            }
+            pos = pos.next;
+        }
+        System.out.println("]");
     }
 
     public static void main(String[] args) {
@@ -51,65 +74,15 @@ public class ListQueue {
 
     }
 
+    /************************* 单链表 ************************/
 
-    /************************* 单链表实现 ************************/
+    private class Node {
+        private int n_data;
+        private Node next;
 
-    private class SingleNodeList {
-
-        private Node n_head;
-        private Node n_tail;
-
-        private int size;
-
-        public SingleNodeList() {
-        }
-
-        int addTail(int e) {
-            Node node = new Node(e);
-            // empty
-            if (size == 0) {
-                n_head = n_tail = node;
-            } else {
-                n_tail.next = node;
-                n_tail = node;
-            }
-            ++size;
-            return e;
-        }
-
-        int removeHead() {
-            if (size == 0) {
-                throw new RuntimeException("xx为空");
-            }
-            int e = n_head.n_data;
-            n_head = n_head.next;
-            --size;
-            return e;
-        }
-
-        void printAll() {
-            System.out.print("[");
-            Node pos = n_head;
-            for (int i = 0; i < size; i++) {
-                if (i == size - 1) {
-                    System.out.print(pos.n_data);
-                } else {
-                    System.out.print(pos.n_data + ", ");
-                }
-                pos = pos.next;
-            }
-            System.out.println("]");
-        }
-
-        private class Node {
-            private int n_data;
-            private Node next;
-
-            public Node(int n_data) {
-                this.n_data = n_data;
-                this.next = null;
-            }
+        public Node(int n_data) {
+            this.n_data = n_data;
+            this.next = null;
         }
     }
-
 }
