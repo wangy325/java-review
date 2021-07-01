@@ -21,7 +21,7 @@ import java.util.Arrays;
  *         3. 当readSequence > writeSequence时，即可认为队列为空；
  *     </li>
  *     <li>
- *         4. 当（writeSequence - readSequence）+ 1 > {@link CircularBufferVariety#data}.length时，即可认为队列已满；
+ *         4. 当（writeSequence - readSequence）+ 1 == {@link CircularBufferVariety#data}.length时，即可认为队列已满；
  *     </li>
  * </ul>
  *
@@ -65,6 +65,16 @@ public class CircularBufferVariety {
         return data[readSequence++ % data.length];
     }
 
+    void printAll(){
+        System.out.println("数组：" + Arrays.toString(data));
+        System.out.print("队列：[");
+        // 从队头到队尾
+        for (int i = readSequence; i <= writeSequence; i++) {
+            System.out.print(data[i % data.length] + " ");
+        }
+        System.out.println("]");
+    }
+
     public static void main(String[] args) {
         CircularBufferVariety cb = new CircularBufferVariety(4);
         cb.enQueue(1);
@@ -74,9 +84,9 @@ public class CircularBufferVariety {
         cb.enQueue(5);
         cb.deQueue();
         cb.enQueue(7);
-        System.out.println(Arrays.toString(cb.data));
+        cb.printAll();
         cb.enQueue(9);
-        System.out.println(Arrays.toString(cb.data));
+        cb.printAll();
         // full exception
         cb.enQueue(11);
     }

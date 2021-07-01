@@ -62,7 +62,7 @@ import java.util.Arrays;
  *       和入队类似，<code>read = (read + 1) % N</code>
  * </pre>
  * </p>
- * 不难发现，如果read指针追上write指针，即read==write时，队列为空；反之，若write指针追上read指针，即read=write时，
+ * 不难发现，如果read指针追上write指针，即read==write时，队列为空；反之，若write指针追上read指针，即read==write时，
  * 队列为满。<b>如何消除歧义？</b>
  * <p>
  * 有2种办法消除歧义：
@@ -76,7 +76,7 @@ import java.util.Arrays;
  * <p>
  * 如果按照方法2，队列为空的判断条件不变，仍为<code>read == write</code>；但是队列为满的条件变了，即若
  * <code>
- *     read = (write + 1) % N
+ *     read == (write + 1) % N
  * </code>
  * 时，认为队列已满。
  * <p>
@@ -125,6 +125,16 @@ public class CircularBuffer {
         return e;
     }
 
+    void printAll() {
+        System.out.println("数组：" + Arrays.toString(data));
+        System.out.print("队列：[");
+        // 从队头到队尾
+        for (int i = read; i % data.length != write; i++) {
+            System.out.print(data[i % data.length] + " ");
+        }
+        System.out.println("]");
+    }
+
     public static void main(String[] args) {
         // 实际上，仅可以入队3个元素
         CircularBuffer cb = new CircularBuffer(4);
@@ -135,8 +145,7 @@ public class CircularBuffer {
         cb.enQueue(5);
         cb.deQueue();
         cb.enQueue(7);
-        System.out.println(Arrays.toString(cb.data));
-        System.out.printf("read: %s; write: %s%n", cb.read, cb.write);
+        cb.printAll();
         // full exception
         cb.enQueue(9);
     }
