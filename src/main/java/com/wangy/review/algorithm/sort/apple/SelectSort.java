@@ -1,4 +1,4 @@
-package com.wangy.review.algorithm.sort;
+package com.wangy.review.algorithm.sort.apple;
 
 import java.util.Arrays;
 

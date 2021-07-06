@@ -1,4 +1,4 @@
-package com.wangy.review.algorithm.sort;
+package com.wangy.review.algorithm.sort.apple;
 
 import java.util.Arrays;
 
@@ -143,7 +143,7 @@ public class InsertSort {
      * <br>
      * 常用的步长序列（不是最好的）为 h(k) = h(k+1)/2，该序列的最坏时间复杂度为O(N^2)。
      * <p>
-     * 关于复杂度的证明，稍微复杂，此处不予讨论，仅给出代码实现
+     * 关于复杂度的证明，稍微繁琐，此处不予讨论，仅给出代码实现
      * </p>
      */
     static void shellSort(int[] a) {
