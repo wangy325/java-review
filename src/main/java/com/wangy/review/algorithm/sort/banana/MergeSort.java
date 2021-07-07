@@ -28,7 +28,8 @@ public class MergeSort {
         sort(a, p, m);
         sort(a, m + 1, r);
         // 合并
-        merge(a, p, m, r);
+//        merge(a, p, m, r);
+        mergeBySentinel(a, p, m, r);
     }
 
     private static void merge(int[] a, int p, int m, int r) {
@@ -51,12 +52,46 @@ public class MergeSort {
         while (right <= r) {
             tmpA[pos++] = a[right++];
         }
-        // 将缓存数据写到原始数组中对应的位置
+        // 将缓存数据写到原始数组中「对应的位置」
         // p, m, r
-        for (int i = r - p; i >= 0; i--, r--) {
+        /*for (int i = r - p; i >= 0; i--, r--) {
             a[r] = tmpA[i];
+        }*/
+        // 等效代码
+        for (int i = 0; i < tmpA.length; i++) {
+            a[p + i] = tmpA[i];
         }
+        // 打印合并的过程
         System.out.println("merge ---" + Arrays.toString(tmpA));
+    }
+
+    // 为2个分治数组分别添加哨兵
+    public static void mergeBySentinel(int[] a, int p, int m, int r) {
+        // 2个数组分别多申请一个空间，用来放置哨兵
+        int[] leftArray = new int[m - p + 2];
+        int[] rightArray = new int[r - m + 1];
+        // 拷贝元素
+        for (int i = p; i <= m; i++) {
+            leftArray[i - p] = a[i];
+        }
+        for (int i = m + 1; i <= r; i++) {
+            rightArray[i - m - 1] = a[i];
+        }
+        // 放置哨兵
+        leftArray[leftArray.length - 1] = Integer.MAX_VALUE;
+        rightArray[rightArray.length - 1] = Integer.MAX_VALUE;
+
+        // 合并元素
+        int li = 0, ri = 0;
+        int pos = p;
+
+        while (pos <= r) {
+            if (leftArray[li] <= rightArray[ri])
+                a[pos++] = leftArray[li++];
+            else
+                a[pos++] = rightArray[ri++];
+        }
+
     }
 
     public static void main(String[] args) {
