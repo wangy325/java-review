@@ -11,7 +11,7 @@ import java.util.List;
 public class Main {
 
     public static void main(String[] args) {
-        System.out.println(sln(123));
+        System.out.println(sln2("123"));
     }
 
     static int sln(int n) {

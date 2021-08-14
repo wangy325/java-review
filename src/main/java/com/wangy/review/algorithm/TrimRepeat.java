@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Scanner;
 
 /**
- * 链接：https://www.nowcoder.com/questionTerminal/42852fd7045c442192fa89404ab42e92?f=discussion
+ * 链接：<a href="https://www.nowcoder.com/questionTerminal/42852fd7045c442192fa89404ab42e92?f=discussion">字节-自动校对程序</a>
  * 来源：牛客网
  * <p>
  * 空间限制：C/C++ 32M，其他语言64M<br>

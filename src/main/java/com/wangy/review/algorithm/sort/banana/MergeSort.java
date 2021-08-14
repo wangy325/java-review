@@ -84,14 +84,13 @@ public class MergeSort {
         // 合并元素
         int li = 0, ri = 0;
         int pos = p;
-
         while (pos <= r) {
+            // 哨兵元素的目的在于，始终可以保证2个分治数组的元素遍历完毕
             if (leftArray[li] <= rightArray[ri])
                 a[pos++] = leftArray[li++];
             else
                 a[pos++] = rightArray[ri++];
         }
-
     }
 
     public static void main(String[] args) {

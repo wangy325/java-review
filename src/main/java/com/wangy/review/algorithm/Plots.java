@@ -5,8 +5,9 @@ import java.util.Queue;
 import java.util.Scanner;
 
 /**
- * 链接：https://www.nowcoder.com/questionTerminal/c0803540c94848baac03096745b55b9b?f=discussion<br>
- * 我叫王大锤，是一名特工。我刚刚接到任务：在字节跳动大街进行埋伏，抓捕恐怖分子孔连顺。和我一起行动的还有另外两名特工，我提议
+ * 链接：<a href = "https://www.nowcoder.com/questionTerminal/c0803540c94848baac03096745b55b9b?f=discussion">
+ *     我叫王大锤，是一名特工。</a><br>
+ * 我刚刚接到任务：在字节跳动大街进行埋伏，抓捕恐怖分子孔连顺。和我一起行动的还有另外两名特工，我提议
  * <p>
  * 1. 我们在字节跳动大街的N个建筑中选定3个埋伏地点。<br>
  * 2. 为了相互照应，我们决定相距最远的两名特工间的距离不超过D。<br>
