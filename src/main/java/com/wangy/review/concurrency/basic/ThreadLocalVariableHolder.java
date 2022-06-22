@@ -2,6 +2,7 @@ package com.wangy.review.concurrency.basic;
 
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 /**
  * 线程本地变量的简单使用
@@ -12,23 +13,12 @@ import java.util.concurrent.TimeUnit;
  */
 public class ThreadLocalVariableHolder {
     // Java 8 提供的方法
-    /*static final ThreadLocal<Integer> value = ThreadLocal.withInitial(new Supplier<Integer>() {
-        @Override
-        public Integer get() {
-            Random r = new Random();
-            return r.nextInt(10);
-        }
-    });*/
+    private static final ThreadLocal<Integer> value = ThreadLocal.withInitial(() -> {
+        Random r = new Random();
+        return r.nextInt(10);
+    });
 
     static class Task implements Runnable {
-        static final ThreadLocal<Integer> value = new ThreadLocal<Integer>() {
-            private Random r = new Random();
-
-            @Override
-            protected synchronized Integer initialValue() {
-                return r.nextInt(10);
-            }
-        };
 
         static void increment() {
             value.set(value.get() + 1);

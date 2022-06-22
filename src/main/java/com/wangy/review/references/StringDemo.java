@@ -3,6 +3,8 @@ package com.wangy.review.references;
 /**
  * 测试String对象的存储位置：堆/常量池
  *
+ * 2022.06.08: JDK7开始，JVM已经将字符串常量池移到Java堆中
+ *
  * @author wangy
  * @version 1.0
  * @date 2020/11/30 / 15:47
