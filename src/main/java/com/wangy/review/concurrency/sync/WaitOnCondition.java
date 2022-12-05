@@ -3,6 +3,7 @@ package com.wangy.review.concurrency.sync;
 import lombok.SneakyThrows;
 import lombok.var;
 
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
@@ -70,7 +71,7 @@ public class WaitOnCondition {
 
     public static void main(String[] args) throws InterruptedException {
         WaitOnCondition tp = new WaitOnCondition();
-        var pool = Executors.newCachedThreadPool();
+        ExecutorService pool = Executors.newCachedThreadPool();
         pool.submit(tp.new Play());
         pool.submit((tp.new Record()));
 

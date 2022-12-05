@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @version 1.0
  * @date 2020/11/17 / 17:04
  */
-public class ResetCyclicBarrier {
+public class CyclicBarrier_Reset {
     static void reSetBarrierIf(int parties, int bound) {
         TaskMayFail[] tasks = new TaskMayFail[parties];
         ThreadPoolExecutor exec = (ThreadPoolExecutor) Executors.newCachedThreadPool();

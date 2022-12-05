@@ -11,7 +11,7 @@ import java.util.concurrent.CyclicBarrier;
  * @version 1.0
  * @date 2020/11/16 / 18:32
  */
-public class TestCyclicBarrier {
+public class CyclicBarrierWithBarrierAction_1 {
 
     private static StringBuffer sb = new StringBuffer();
     /** CyclicBarrier的构造器任务总是会先执行完毕 */
@@ -40,13 +40,14 @@ public class TestCyclicBarrier {
         } catch (Exception e) {
             // ignore
         }
+        // 312 or 321
         return Integer.parseInt(sb.toString()) | (sb.delete(0, sb.length())).length();
     }
 
     static void alwaysReturn() {
         for (; ; ) {
             int r;
-            if ((r = runSeq()) != ASSERT_VALUE) {
+            if ((r = runSeq()) == ASSERT_VALUE) {
                 // should be 321
                 System.out.println(r);
                 return;

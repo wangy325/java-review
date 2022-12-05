@@ -10,12 +10,12 @@ import java.util.concurrent.*;
  * @version 1.0
  * @date 2020/11/16 / 18:16
  */
-public class HorseRace {
+public class CycleBarrier_HorseRace {
 
     static class Horse implements Runnable {
         private static int counter = 0;
         private final int id = counter++;
-        private int strides = 0;
+        private volatile int strides = 0;
         private static Random rand = new Random(47);
         private static CyclicBarrier barrier;
 
@@ -63,7 +63,7 @@ public class HorseRace {
     private CyclicBarrier barrier;
 
     /** 这是一构造器 */
-    public HorseRace(int nHorses, final int pause) {
+    public CycleBarrier_HorseRace(int nHorses, final int pause) {
         barrier = new CyclicBarrier(nHorses, () -> {
             StringBuilder s = new StringBuilder();
             for (int i = 0; i < FINISH_LINE; i++) {
@@ -95,7 +95,7 @@ public class HorseRace {
 
     public static void main(String[] args) {
         int nHorses = 7;
-        int pause = 200;
+        int pause = 50;
         if (args.length > 0) { // Optional argument
             int n = new Integer(args[0]);
             nHorses = n > 0 ? n : nHorses;
@@ -104,6 +104,6 @@ public class HorseRace {
             int p = new Integer(args[1]);
             pause = p > -1 ? p : pause;
         }
-        new HorseRace(nHorses, pause);
+        new CycleBarrier_HorseRace(nHorses, pause);
     }
 }
