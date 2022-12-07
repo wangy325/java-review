@@ -4,3 +4,5 @@ out/*
 *.iml
 .DS_Store
 target/*
+*.hprof
+java_pid2583.hprof.7pixr.b.ij

@@ -1,14 +1,12 @@
 package com.wangy.common.time;
 
-import sun.util.resources.LocaleData;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 /**
- * a simple introduction to java.time.*
+ * A simple introduction of JDK 1.8's java.time.*
  *
  * @author wangy
  * @date 2021-2-24 15:35
