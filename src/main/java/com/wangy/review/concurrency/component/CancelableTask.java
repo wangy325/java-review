@@ -20,11 +20,8 @@ public class CancelableTask {
         public V call() throws Exception {
             System.out.println("---");
             int i = 0;
-            while (true) {
+            while (i <= 100000) {
                 i++;
-                if (i > 100000) {
-                    break;
-                }
             }
             return null;
         }

@@ -13,19 +13,19 @@ import java.util.Date;
 /**
  * {@link java.time} 是jdk8 新增的日期时间包，可以完全替代之前的日期时间系统，包括：
  *
- * <li>{@link java.util.Date}</li>
+ * <li>{@link Date}</li>
  * <li>{@link java.util.Calendar}</li>
  * <li>{@link java.util.TimeZone}</li>
  * <li>{@link java.text.DateFormat}</li>
- * <li>{@link java.text.SimpleDateFormat}</li>
+ * <li>{@link SimpleDateFormat}</li>
  * <p>
  * {@link java.time}是全新设计的api，应学习如何使用之。
  * <p>
- * talk1: https://stackoverflow.com/questions/27454025/unable-to-obtain-localdatetime-from-temporalaccessor-when-parsing-localdatetime
+ * talk1: <a href="https://stackoverflow.com/questions/27454025/unable-to-obtain-localdatetime-from-temporalaccessor-when-parsing-localdatetime">...</a>
  *
  * @author wangy
  * @date 2021-2-2 9:47
- * @see java.time.LocalDateTime
+ * @see LocalDateTime
  */
 public class CommonUsage {
     static String yyyy = "yyyy";

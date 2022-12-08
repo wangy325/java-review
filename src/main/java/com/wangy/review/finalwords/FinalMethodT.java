@@ -36,7 +36,7 @@ class FinalMethod {
         System.out.println("g()");
     }
 
-    private final void p() {
+    private void p() {
         System.out.println("p()");
     }
 }

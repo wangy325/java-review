@@ -3,7 +3,7 @@ package com.wangy.algorithm;
 import java.util.Scanner;
 
 /**
- * 来源：https://www.nowcoder.com/questionTerminal/f9c6f980eeec43ef85be20755ddbeaf4
+ * 来源：<a href="https://www.nowcoder.com/questionTerminal/f9c6f980eeec43ef85be20755ddbeaf4">...</a>
  * <p>
  * 王强今天很开心，公司发给N元的年终奖。王强决定把年终奖用于购物，他把想买的物品分为两类：主件与附件，附件是从属于某个主件的，
  * 下表就是一些主件与附件的例子：
