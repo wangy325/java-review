@@ -1,6 +1,8 @@
 package com.wangy.algorithm.tree;
 
 
+import java.util.*;
+
 /**
  * 二分查找树 BST 实现
  *
@@ -14,6 +16,8 @@ public class BinarySearchTree<T extends Comparable<T>> {
 
     private int size;
 
+
+    private final List<T> traversalList = new ArrayList<>();
 
     public BinarySearchTree() {
     }
@@ -48,6 +52,12 @@ public class BinarySearchTree<T extends Comparable<T>> {
         if (root.insertKey(key)) size++;
     }
 
+    private void emptyTraversalList(){
+        if (size <= traversalList.size())
+            traversalList.clear();
+    }
+
+
     /**
      * pre-order traversal 前序遍历
      * 先访问自己，再访问左子树，再访问右子树
@@ -57,20 +67,43 @@ public class BinarySearchTree<T extends Comparable<T>> {
      * <p>
      * post-order traversal 后序遍历
      * 先访问左子树，再访问右子树，再访问自己
+     * <p>
+     * 层序遍历 按照树的层级来遍历
      */
 
-    void printPreOder(TreeNode node) {
-        if (node == null) return;
-        System.out.print(node.value + "\t");
-        printPreOder(node.leftChild);
-        printPreOder(node.rightChild);
+    List<T> traversalPreOder(TreeNode node) {
+        if (node == null) return null;
+        emptyTraversalList();
+        traversalList.add(node.value);
+        traversalPreOder(node.left);
+        traversalPreOder(node.right);
+        return traversalList;
+    }
+
+    /**
+     * 层序遍历
+     */
+    List<T> traversalLevelOrder(TreeNode node) {
+        if (node == null) return null;
+        emptyTraversalList();
+        traversalList.add(node.value);
+        Queue<TreeNode> tQueue =  new ArrayDeque<>(); // use as FIFO
+        if (node.left != null) tQueue.offer(node.left);
+        if (node.right != null) tQueue.offer(node.right);
+        while(!tQueue.isEmpty()){
+            TreeNode ele = tQueue.poll();
+            traversalList.add(ele.value);
+            if (ele.left != null) tQueue.offer(ele.left);
+            if (ele.right != null) tQueue.offer(ele.right);
+        }
+        return traversalList;
     }
 
     private final class TreeNode {
 
         private T value;
-        private TreeNode leftChild;
-        private TreeNode rightChild;
+        private TreeNode left;
+        private TreeNode right;
 
 
         public TreeNode(T value) {
@@ -93,14 +126,14 @@ public class BinarySearchTree<T extends Comparable<T>> {
 
                 if (key.compareTo(current.value) > 0) {
                     // search right child
-                    if (current.rightChild == null) return null;
-                    current = current.rightChild;
+                    if (current.right == null) return null;
+                    current = current.right;
                 }
 
                 if (key.compareTo(current.value) < 0) {
                     // search left child
-                    if (current.leftChild == null) return null;
-                    current = current.leftChild;
+                    if (current.left == null) return null;
+                    current = current.left;
                 }
             }
         }
@@ -118,14 +151,14 @@ public class BinarySearchTree<T extends Comparable<T>> {
             TreeNode current = root;
             while (true) {
                 if (key.compareTo(current.value) > 0) {
-                    if (current.rightChild == null) return null;
-                    else if (current.rightChild.value == key) return current;
-                    current = current.rightChild;
+                    if (current.right == null) return null;
+                    else if (current.right.value == key) return current;
+                    current = current.right;
                 }
                 if (key.compareTo(current.value) < 0) {
-                    if (current.leftChild == null) return null;
-                    else if (current.leftChild.value == key) return current;
-                    current = current.leftChild;
+                    if (current.left == null) return null;
+                    else if (current.left.value == key) return current;
+                    current = current.left;
                 }
             }
         }
@@ -143,19 +176,19 @@ public class BinarySearchTree<T extends Comparable<T>> {
             while (true) {
                 if (key.compareTo(current.value) > 0) {
                     // right child
-                    if (current.rightChild == null) {
-                        current.rightChild = new TreeNode(key);
+                    if (current.right == null) {
+                        current.right = new TreeNode(key);
                         return true;
                     }
-                    current = current.rightChild;
+                    current = current.right;
                 }
                 if (key.compareTo(current.value) < 0) {
                     // left child
-                    if (current.leftChild == null) {
-                        current.leftChild = new TreeNode(key);
+                    if (current.left == null) {
+                        current.left = new TreeNode(key);
                         return true;
                     }
-                    current = current.leftChild;
+                    current = current.left;
                 }
                 if (key.compareTo(current.value) == 0) {
                     System.out.println("Same key is not allowed.");
@@ -177,20 +210,20 @@ public class BinarySearchTree<T extends Comparable<T>> {
 
             if (key.compareTo(current.value) > 0) {
                 // right child
-                if (current.rightChild == null) {
-                    current.rightChild = new TreeNode(key);
+                if (current.right == null) {
+                    current.right = new TreeNode(key);
                     return true;
                 }
-                current = current.rightChild;
+                current = current.right;
                 insertKey(key, current);
             }
             if (key.compareTo(current.value) < 0) {
                 // left child
-                if (current.leftChild == null) {
-                    current.leftChild = new TreeNode(key);
+                if (current.left == null) {
+                    current.left = new TreeNode(key);
                     return true;
                 }
-                current = current.leftChild;
+                current = current.left;
                 insertKey(key, current);
             } else {
                 throw new RuntimeException("Same key is not allowed in binary search tree.");
@@ -212,42 +245,44 @@ public class BinarySearchTree<T extends Comparable<T>> {
             assert parentNode != null;
 
             // case1 叶子节点直接删除
-            if (targetNode.leftChild == null && targetNode.rightChild == null) {
+            if (targetNode.left == null && targetNode.right == null) {
+                if (key == root.value) root = null;
                 if (key.compareTo(parentNode.value) > 0) {
                     // 删除的节点是右孩子
-                    parentNode.rightChild = null;
+                    parentNode.right = null;
                 } else {
-                    parentNode.leftChild = null;
+                    parentNode.left = null;
                 }
+                size--;
                 return key;
             }
 
             // case 2 非叶子节点，树重组
-            // 找出左子树中最大的/右子树中最小的替换被删除的节点
+            // 找出左子树中最大的/右子树中最小的节点替换被删除的节点
             TreeNode _1stChild; // 目标节点的最近子节点
-            TreeNode successor = null; // 上升节点
+            TreeNode successor; // 上升节点
             TreeNode successorParent; // 上升节点的父节点
             // 注意，successor不一定为叶子节点
             // 但只能存在左孩子或者右孩子中的一种，successor不可能有2个孩子！
-            TreeNode reserved = null ; // 后继节点（successor子节点）
+            TreeNode reserved; // 后继节点（successor子节点）
             // leftChild != null || rightChild != null
-            if (targetNode.leftChild != null) {
-                _1stChild = targetNode.leftChild;
+            if (targetNode.left != null) {
+                _1stChild = targetNode.left;
                 successor = findMaxSuccessor(_1stChild);
-                reserved = successor.leftChild;
+                reserved = successor.left;
                 successorParent = getParentNode(successor.value);
                 assert successorParent != null;
                 // 设置上升节点的左右孩子
-                if (successor.value != _1stChild.value) successor.leftChild = _1stChild;
-                successor.rightChild = targetNode.rightChild;
+                if (successor.value != _1stChild.value) successor.left = _1stChild;
+                successor.right = targetNode.right;
             } else {
-                _1stChild = targetNode.rightChild;
+                _1stChild = targetNode.right;
                 successor = findMinSuccessor(_1stChild);
-                reserved = successor.rightChild;
+                reserved = successor.right;
                 successorParent = getParentNode(successor.value);
                 assert successorParent != null;
-                successor.leftChild = targetNode.leftChild;
-                if (successor.value != _1stChild.value) successor.rightChild = _1stChild;
+                successor.left = targetNode.left;
+                if (successor.value != _1stChild.value) successor.right = _1stChild;
             }
             // 若删除的是根节点
             if (parentNode.value == root.value) {
@@ -255,18 +290,19 @@ public class BinarySearchTree<T extends Comparable<T>> {
             } else {
                 if (key.compareTo(parentNode.value) > 0) {
                     // 删除的节点是右孩子
-                    parentNode.rightChild = successor;
+                    parentNode.right = successor;
                 } else {
-                    parentNode.leftChild = successor;
+                    parentNode.left = successor;
                 }
             }
 
             if (successor.value.compareTo(successorParent.value) > 0) {
                 // 上升节点是右孩子
-                successorParent.rightChild = reserved;
+                successorParent.right = reserved;
             } else {
-                successorParent.leftChild = reserved;
+                successorParent.left = reserved;
             }
+            size--;
             return key;
         }
 
@@ -274,8 +310,8 @@ public class BinarySearchTree<T extends Comparable<T>> {
          * 找出子树的最小节点
          */
         private TreeNode findMinSuccessor(TreeNode node) {
-            if (node.leftChild == null) return node;
-            return findMinSuccessor(node.leftChild);
+            if (node.left == null) return node;
+            return findMinSuccessor(node.left);
         }
 
 
@@ -283,8 +319,8 @@ public class BinarySearchTree<T extends Comparable<T>> {
          * 找出子树的最大节点
          */
         private TreeNode findMaxSuccessor(TreeNode node) {
-            if (node.rightChild == null) return node;
-            return findMaxSuccessor(node.rightChild);
+            if (node.right == null) return node;
+            return findMaxSuccessor(node.right);
         }
     }
 
@@ -292,7 +328,6 @@ public class BinarySearchTree<T extends Comparable<T>> {
         public static void main(String[] args) {
             BinarySearchTree<Integer> bst = new BinarySearchTree<>();
 
-            System.out.print("[insert & traversal]\t");
             bst.insert(21);
             bst.insert(14);
             bst.insert(7);
@@ -316,44 +351,33 @@ public class BinarySearchTree<T extends Comparable<T>> {
             bst.insert(39);
 
             // 18 16 13 17 19
-            bst.printPreOder(bst.root);
+            System.out.println("[traversal pre-order]\t" + bst.traversalPreOder(bst.root));
+            System.out.println("[traversal level-order]\t" + bst.traversalLevelOrder(bst.root));
 
-            System.out.println("\n[count]\t\t\t\t\ttree size: " + bst.size());
+            System.out.println("[count]\t\t\t\t\ttree size: " + bst.size());
 
             System.out.println("[find parent]\t\t\tparent of 23: " + bst.findParent(23));
 
             System.out.println("[contains]\t\t\t\tcontains key 20: " + bst.find(20));
 
             System.out.println("[deletion]\t\t\t\tdelete key 23: " + bst.del(23));
-            System.out.print("[traversal]\t\t\t\t");
-            bst.printPreOder(bst.root);
-            System.out.println();
+            System.out.println("[traversal]\t\t\t\t" + bst.traversalPreOder(bst.root));
 
             System.out.println("[deletion]\t\t\t\tdelete key 48: " + bst.del(48));
-            System.out.print("[traversal]\t\t\t\t");
-            bst.printPreOder(bst.root);
-            System.out.println();
+            System.out.println("[traversal]\t\t\t\t" + bst.traversalPreOder(bst.root));
 
             System.out.println("[deletion]\t\t\t\tdelete key 19: " + bst.del(19));
-            System.out.print("[traversal]\t\t\t\t");
-            bst.printPreOder(bst.root);
-            System.out.println();
+            System.out.println("[traversal]\t\t\t\t" + bst.traversalPreOder(bst.root));
 
             System.out.println("[deletion]\t\t\t\tdelete key 25: " + bst.del(25));
-            System.out.print("[traversal]\t\t\t\t");
-            bst.printPreOder(bst.root);
-            System.out.println();
+            System.out.println("[traversal]\t\t\t\t" + bst.traversalPreOder(bst.root));
 
             System.out.println("[deletion]\t\t\t\tdelete key 45: " + bst.del(45));
-            System.out.print("[traversal]\t\t\t\t");
-            bst.printPreOder(bst.root);
-            System.out.println();
+            System.out.println("[traversal]\t\t\t\t" + bst.traversalPreOder(bst.root));
 
             // delete root node
-            System.out.println("[deletion]\t\t\t\tdelete key 21: " + bst.del(21));
-            System.out.print("[traversal]\t\t\t\t");
-            bst.printPreOder(bst.root);
-            System.out.println();
+            System.out.println("[deletion]\t\t\t\tdelete root: " + bst.del(bst.root.value));
+            System.out.println("[traversal]\t\t\t\t" + bst.traversalLevelOrder(bst.root));
         }
     }
 }
