@@ -5,7 +5,7 @@ package com.wangy.designpattern.creation.factory;
  * @version 1.0
  * @date 2022/3/12 / 17:30
  */
-public class WindowsButton implements Button{
+public class ButtonWin implements Button{
     @Override
     public void render() {
         System.out.println("<===== render windows button.");

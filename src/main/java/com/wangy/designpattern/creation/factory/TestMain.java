@@ -5,7 +5,7 @@ package com.wangy.designpattern.creation.factory;
  * @version 1.0
  * @date 2022/3/12 / 17:35
  */
-public class Main {
+public class TestMain {
 
     public static void main(String[] args) {
         String os = "windows";
@@ -21,9 +21,9 @@ public class Main {
         System.setProperty("current.OS", os);
         Dialog dialog;
         if (System.getProperty("current.OS").equals("web")){
-            dialog = new HtmlDialog();
+            dialog = new DialogHTML();
         }else{
-            dialog = new WindowsDialog();
+            dialog = new DialogWin();
         }
         return dialog;
     }

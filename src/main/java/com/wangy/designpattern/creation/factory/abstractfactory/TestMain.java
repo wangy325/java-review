@@ -1,11 +1,14 @@
-package com.wangy.designpattern.creation.abstractfactory;
+package com.wangy.designpattern.creation.factory.abstractfactory;
 
 /**
  * @author wangy
  * @version 1.0
  * @date 2022/3/12 / 18:48
  */
-public class Main {
+public class TestMain {
+    /**
+     * 依赖倒置：客户依赖抽象，而不是依赖具体类。
+     */
     static GUIFactory factory;
     static Button button;
     static CheckBox checkBox;
@@ -28,7 +31,7 @@ public class Main {
         System.setProperty("current.os", os);
 
         if (System.getProperty("current.os").equals("windows"))
-            factory = new WinFactory();
-        else factory = new MacFactory();
+            factory = new GUIFactoryWin();
+        else factory = new GUIFactoryMac();
     }
 }

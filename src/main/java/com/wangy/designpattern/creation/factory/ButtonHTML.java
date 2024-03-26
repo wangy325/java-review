@@ -5,7 +5,7 @@ package com.wangy.designpattern.creation.factory;
  * @version 1.0
  * @date 2022/3/12 / 17:30
  */
-public class HtmlButton implements Button{
+public class ButtonHTML implements Button{
     @Override
     public void render() {
         System.out.println("=====> render Web Button.");

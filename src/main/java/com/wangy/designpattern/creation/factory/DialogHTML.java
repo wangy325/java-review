@@ -5,9 +5,9 @@ package com.wangy.designpattern.creation.factory;
  * @version 1.0
  * @date 2022/3/12 / 17:31
  */
-public class WindowsDialog extends Dialog{
+public class DialogHTML extends Dialog{
     @Override
     Button createButton() {
-        return new WindowsButton();
+        return new ButtonHTML();
     }
 }

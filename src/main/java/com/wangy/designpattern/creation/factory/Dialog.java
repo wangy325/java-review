@@ -4,9 +4,11 @@ package com.wangy.designpattern.creation.factory;
  * @author wangy
  * @version 1.0
  * @date 2022/3/12 / 17:26
+ * 创建者-工厂
  */
 public abstract class Dialog {
 
+    /** 工厂方法 button factory */
     abstract Button createButton();
 
     /**
