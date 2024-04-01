@@ -33,13 +33,13 @@ class Component {
   +methodB()
 }
 
-Component <-- ConcreteComponent
+Component <|-- ConcreteComponent
 class ConcreteComponent {
   +methodA()
   +methodB()
 }
 
-Component <.. Decorator
+Component <|..* Decorator
 class Decorator {
   <<Abastract>>
   #Component component
@@ -47,21 +47,21 @@ class Decorator {
   +methodB()
 }
 
-Decorator <-- DecoratorA
+Decorator <|-- DecoratorA
 class DecoratorA {
   #Component component
   +methodA()
   +methodB()
 }
 
-Decorator <-- DecoratorB
+Decorator <|-- DecoratorB
 class DecoratorB {
   #Component component
   +methodA()
   +methodB()
 }
 
-Decorator <-- DecoratorC
+Decorator <|-- DecoratorC
 class DecoratorC {
   #Component component
   -Object newStats

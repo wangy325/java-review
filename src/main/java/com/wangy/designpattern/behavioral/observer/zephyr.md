@@ -35,27 +35,24 @@ class Publisher {
   + notifySubscribers()
 }
 
-Publisher o.. Subscriber
+Publisher <|.. Client
+Client *..> Subscriber
+class Client { 
+  - List~Subscriber~ subscribers
+  - Boolean state
+  + registSubscriber(Subscriber s)
+  + unregistSubscriber(Subscriber s)
+  + notifySubscribers()
+}
 class Subscriber {
   <<interface>>
   +update()
 }
-
 Subscriber <|.. ConcreteSubscriber : impl
 class ConcreteSubscriber { 
   ...
   + update()
 }
-Publisher <|.. Client
-class Client { 
-  - List~Subscriber~ subscribers
-  - state
-  + registSubscriber(Subscriber s)
-  + unregistSubscriber(Subscriber s)
-  + notifySubscribers()
-}
-Client o-- ConcreteSubscriber
-
 ```
 
 ### 笔记

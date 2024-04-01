@@ -47,7 +47,7 @@ class ProductA {
   <<Interface>>
 }
 
-ProductA <|-- ConcreteProductA
+ProductA <|.. ConcreteProductA
 class ConcreteProductA
 
 ConcreteFactoryB <.. ProductA
@@ -55,14 +55,14 @@ ConcreteFactoryB <.. ProductB
 class ProductB {
   <<Interface>>
 }
-ProductB <|-- ConcreteProductB
+ProductB <|.. ConcreteProductB
 class ConcreteProductB
 
-AbstractFactory ..* Client
+AbstractFactory <..* Client
 class Client {
-  - AbstractFactory
-  + Client(AbstractFactory f) Client
-  + otherMethod()
+  -AbstractFactory absFactory
+  +Client(AbstractFactory f) Client
+  +otherMethod()
 }
 
 ```

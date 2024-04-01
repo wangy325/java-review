@@ -43,7 +43,7 @@ classDiagram
     Charactor <|-- Knight: Is A
     
     class WeaponBehavior
-    Charactor --* WeaponBehavior : Has A
+    Charactor *--> WeaponBehavior : Has A
     <<Interface>> WeaponBehavior
     WeaponBehavior: +useWeapon()*
     

@@ -24,19 +24,19 @@ class Invoker {
     +Command command
     +invoke()
 }
-Invoker *.. Command
+Invoker *..> Command
 class Command {
     <<Interface>>
     +execute()
     +undo()
 }
-ConcreteCommand --|> Command
+ConcreteCommand ..|> Command
 class ConcreteCommand {
     Receiver receiver
     +execute()
     +undo()
 }
-Receiver --* ConcreteCommand
+Receiver <--* ConcreteCommand
 class Receiver {
     +someOperation()
 }

@@ -32,32 +32,32 @@ class Product {
   +method1()
   +method2()
 }
-Product --* ProductCreater
+Product ..> ProductCreater
 class ProductCreater {
   <<Abstract>>
   +factoryMethod() Product
   +otherMethod()
 }
 
-ConcreateProductA ..> Product
+ConcreateProductA ..|> Product
 class ConcreateProductA {
   +methodA()
   +methodB()
 }
 
-ConcreateProductB ..> Product
+ConcreateProductB ..|> Product
 class ConcreateProductB {
   +methodA()
   +methodB()
 }
 
-ProductACreater --> ProductCreater
+ProductACreater --|> ProductCreater
 class ProductACreater {
   +factoryMethod() Product
   +otherMethod()
 }
 
-ProductBCreater --> ProductCreater
+ProductBCreater --|> ProductCreater
 class ProductBCreater {
   +factoryMethod() Product
   +otherMethod()
